@@ -1,0 +1,186 @@
+{
+	"deviceInstances": [
+		{
+			"id": "gateway-instance-01",
+			"name": "gateway-instance-01",
+			"protocol": "customized-protocol-gateway-instance-01",
+			"model": "gateway-model",
+			"twins": [
+				{
+					"propertyName": "temperature1",
+					"desired": {
+						"value": "15",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					},
+					"reported": {
+						"value": "15",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					}
+				},
+				{
+					"propertyName": "temperature2",
+					"desired": {
+						"value": "15",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					},
+					"reported": {
+						"value": "15",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					}
+				},
+				{
+					"propertyName": "humidity1",
+					"desired": {
+						"value": "30",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					},
+					"reported": {
+						"value": "30",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					}
+				},
+				{
+					"propertyName": "humidity2",
+					"desired": {
+						"value": "30",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					},
+					"reported": {
+						"value": "30",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "int"
+						}
+					}
+				}
+			],
+			"propertyVisitors": [
+				{
+					"name": "temperature1",
+					"propertyName": "temperature1",
+					"modelName": "gateway-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "zlan",
+						"configData": {
+							"feature": "temperature1"
+						}
+					}
+				},
+				{
+					"name": "temperature2",
+					"propertyName": "temperature2",
+					"modelName": "gateway-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "zlan",
+						"configData": {
+							"feature": "temperature2"
+						}
+					}
+				},
+				{
+					"name": "humidity1",
+					"propertyName": "humidity1",
+					"modelName": "gateway-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "zlan",
+						"configData": {
+							"feature": "humidity1"
+						}
+					}
+				},
+				{
+					"name": "humidity2",
+					"propertyName": "humidity2",
+					"modelName": "gateway-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "zlan",
+						"configData": {
+							"feature": "humidity2"
+						}
+					}
+				}
+			]
+		}
+	],
+	"deviceModels": [
+		{
+			"name": "gateway-model",
+			"properties": [
+				{
+					"name": "temperature1",
+					"dataType": "int",
+					"description": "temperature  by device 1",
+					"accessMode": "ReadOnly",
+					"defaultValue": 15,
+					"minimum": 0,
+					"maximum": 0
+				},
+				{
+					"name": "temperature2",
+					"dataType": "int",
+					"description": "temperature by device 2",
+					"accessMode": "ReadOnly",
+					"defaultValue": 15,
+					"minimum": 0,
+					"maximum": 0
+				},
+				{
+					"name": "humidity1",
+					"dataType": "int",
+					"description": "humidity by device 2",
+					"accessMode": "ReadOnly",
+					"defaultValue": 15,
+					"minimum": 0,
+					"maximum": 0
+				},
+				{
+					"name": "humidity2",
+					"dataType": "int",
+					"description": "humidity by device 2",
+					"accessMode": "ReadOnly",
+					"defaultValue": 15,
+					"minimum": 0,
+					"maximum": 0
+				}
+			]
+		}
+	],
+	"protocols": [
+		{
+			"name": "customized-protocol-gateway-instance-01",
+			"protocolConfig": null,
+			"protocolCommonConfig": {
+				"customizedValues": {
+					"IP": "127.0.0.1",
+					"port": 1883,
+					"topic": "mqttsub"
+				}
+			}
+		}
+	]
+}

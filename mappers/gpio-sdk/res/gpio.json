@@ -1,0 +1,134 @@
+{
+	"deviceInstances": [
+		{
+			"id": "led-instance-01",
+			"name": "led-instance-01",
+			"model": "led-model",
+			"twins": [
+				{
+					"propertyName": "yellow-power-status",
+					"desired": {
+						"value": "OFF",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					},
+					"reported": {
+						"value": "OFF",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"propertyName": "green-power-status",
+					"desired": {
+						"value": "OFF",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					},
+					"reported": {
+						"value": "OFF",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"propertyName": "red-power-status",
+					"desired": {
+						"value": "OFF",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					},
+					"reported": {
+						"value": "OFF",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					}
+				}
+			],
+			"propertyVisitors": [
+				{
+					"name": "yellow-power-status",
+					"propertyName": "yellow-power-status",
+					"modelName": "led-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "rpio",
+						"configData": {
+							"pin": 17
+						}
+					}
+				},
+				{
+					"name": "green-power-status",
+					"propertyName": "green-power-status",
+					"modelName": "led-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "rpio",
+						"configData": {
+							"pin": 27
+						}
+					}
+				},
+				{
+					"name": "red-power-status",
+					"propertyName": "red-power-status",
+					"modelName": "led-model",
+					"protocol": "customized-protocol",
+					"visitorConfig": {
+						"protocolName": "rpio",
+						"configData": {
+							"pin": 22
+						}
+					}
+				}
+			]
+		}
+	],
+	"deviceModels": [
+		{
+			"name": "led-model",
+			"properties": [
+				{
+					"name": "red-power-status",
+					"dataType": "string",
+					"description": "red",
+					"accessMode": "ReadWrite",
+					"defaultValue": "OFF"
+				},
+				{
+					"name": "yellow-power-status",
+					"dataType": "string",
+					"description": "yellow",
+					"accessMode": "ReadWrite",
+					"defaultValue": "OFF"
+				},
+				{
+					"name": "green-power-status",
+					"dataType": "string",
+					"description": "green",
+					"accessMode": "ReadWrite",
+					"defaultValue": "OFF"
+				}
+			]
+		}
+	],
+	"protocols": [
+		{
+			"protocolConfig": null,
+			"protocolCommonConfig": null
+		}
+	]
+}

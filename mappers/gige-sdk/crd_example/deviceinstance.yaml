@@ -1,0 +1,106 @@
+apiVersion: devices.kubeedge.io/v1alpha1
+kind: Device
+metadata:
+  name: camera-instance       #实例名
+  labels:                     #实例标记
+    model: camera-instance-model  #标记对应模板
+spec:
+  deviceModelRef:             #参照模板
+    name: camera-instance-model   #参照模板名
+  protocol:                   #协议
+    common:                   #协议通用设置
+      customizedValues:       #自定义协议参数
+        deviceSN: 23636483    #设备序列号（Serial Number）
+    customizedProtocol:       #自定义协议
+      protocolName: GigEVision    #协议名
+  nodeSelector:               #节点选择器更多详情请参考 k8s.io/kubernetes/pkg/apis/core 节点选择器
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: ''
+            operator: In
+            values:
+              - edge-node1          #pls give your edge node name
+  propertyVisitors:           #属性访问器
+    - propertyName: PixelFormat   #属性名——像素格式
+      collectCycle: 500000000     #Mapper 从设备收集数据的频率
+      reportCycle: 1000000000     #Mapper 报告数据的频率
+      customizedProtocol:         #自定义协议
+        protocolName: GigEVision  #参照的协议名
+        configData:               #配置参数
+          FeatureName: 'PixelFormat' #对应相机属性字段
+    - propertyName: image     #必选属性image 用于抓图
+        collectCycle: 500000000   #可更改
+        reportCycle: 1000000000   #可更改
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'image'  #该字段不能更改
+    - propertyName: Width         #图片宽
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'Width'
+    - propertyName: Height        #图片高
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'Height'
+    - propertyName: OffsetX       #兴趣区X轴偏移
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'OffsetX'
+    - propertyName: OffsetY       #兴趣区Y轴偏移
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'OffsetY'
+    - propertyName: AcquisitionFrameRateAbs #获取帧率绝对值
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'AcquisitionFrameRateAbs'
+    - propertyName: AcquisitionFrameRateEnable  #获取帧率设置使能
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'AcquisitionFrameRateEnable'
+    - propertyName: ExposureTimeAbs         #曝光时间绝对值
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'ExposureTimeAbs'
+    - propertyName: AutoFunctionAOIUsageWhiteBalance  #自动白平衡使能
+        collectCycle: 500000000
+        reportCycle: 1000000000
+        customizedProtocol:
+          protocolName: GigEVision
+          configData:
+            FeatureName: 'AutoFunctionAOIUsageWhiteBalance'
+status:
+  twins:
+    - propertyName: PixelFormat   #指定了 desired/reported 值的属性名
+    - propertyName: Width
+    - propertyName: Height
+    - propertyName: OffsetX
+    - propertyName: OffsetY
+    - propertyName: AcquisitionFrameRateAbs
+    - propertyName: AcquisitionFrameRateEnable
+    - propertyName: ExposureTimeAbs
+    - propertyName: AutoFunctionAOIUsageWhiteBalance
+    - propertyName: io-data
+

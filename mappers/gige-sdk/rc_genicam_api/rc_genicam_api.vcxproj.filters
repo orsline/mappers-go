@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{26b2bfdd-06b6-4454-8f9d-ce198d317a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{6eb891ab-3e62-4d42-b1c8-4b51aa46a82d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{8c5ae0dd-d84d-4414-b190-4c6023da6979}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\buffer.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\config.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\cport.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\device.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\exception.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\gentl_wrapper_linux.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\image.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\image_store.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\imagelist.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\interface.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\stream.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rc_genicam_api-2.5.12\rc_genicam_api\system.cc">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="close_device.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="find_device.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="get_image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="get_value.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="open_device.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="set_value.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\buffer.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\config.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\cport.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\device.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\exception.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\gentl_wrapper.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\image.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\image_store.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\imagelist.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\interface.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\pixel_formats.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\stream.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rc_genicam_api-2.5.12\rc_genicam_api\system.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="close_device.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="const.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="find_device.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="get_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="get_value.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="open_device.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="set_value.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

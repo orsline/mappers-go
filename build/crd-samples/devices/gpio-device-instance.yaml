@@ -1,0 +1,67 @@
+apiVersion: devices.kubeedge.io/v1alpha2
+kind: Device
+metadata:
+  name: led-instance-01
+  labels:
+    model: led-model
+spec:
+  deviceModelRef:
+    name: led-model
+  nodeSelector:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: ''
+            operator: In
+            values:
+              - edge51 #pls give your edge node name
+  propertyVisitors:
+    - propertyName: yellow-power-status
+      customizedProtocol:
+        protocolName: rpio
+        configData:
+          pin: 17 #pls give your yellow light's Pin
+    - propertyName: green-power-status
+      customizedProtocol:
+        protocolName: rpio
+        configData:
+          pin: 27 #pls give your green light's Pin
+    - propertyName: red-power-status
+      customizedProtocol:
+        protocolName: rpio
+        configData:
+          pin: 22 #pls give your red light's Pin
+status:
+  twins:
+    - propertyName: yellow-power-status
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "OFF"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "OFF"
+    - propertyName: green-power-status
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "OFF"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "OFF"
+    - propertyName: red-power-status
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "OFF"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "OFF"

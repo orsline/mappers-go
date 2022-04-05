@@ -1,0 +1,35 @@
+apiVersion: devices.kubeedge.io/v1alpha2
+kind: Device
+metadata:
+  name: idmvs-instance-01
+  labels:
+    model: idmvs-model
+spec:
+  deviceModelRef:
+    name: idmvs-model
+  protocol:
+    common:
+      customizedValues:
+        TCPport: 1883
+  nodeSelector:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: ''
+            operator: In
+            values:
+              - edge51 #pls give your edge node name
+  propertyVisitors:
+    - propertyName: barcode
+status:
+  twins:
+    - propertyName: barcode
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "none"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: string
+        value: "none"

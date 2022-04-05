@@ -1,0 +1,14 @@
+mqtt:
+  server: mqtt://10.117.165.202:11883
+  servername: 10.116.32.0
+  username: "wq"
+  password: "1234"
+  clientId: ""
+  certification:
+  privatekey:
+  caCert:
+http:
+  certification: ../res/server.pem
+  privatekey: ../res/server.key
+  caCert: ../res/httpca.pem
+configmap: ../res/mqtt.json

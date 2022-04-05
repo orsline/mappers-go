@@ -10,6 +10,7 @@ require (
 	github.com/goburrow/serial v0.1.0
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/gopcua/opcua v0.1.13
+	github.com/gorilla/mux v1.7.3
 	github.com/kubeedge/kubeedge v1.5.0
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab // indirect
@@ -20,6 +21,7 @@ require (
 	github.com/sailorvii/modbus v0.1.2
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
+	github.com/stianeikeland/go-rpio v4.2.0+incompatible
 	github.com/stretchr/testify v1.6.1
 	github.com/tbrandon/mbserver v0.0.0-20210320091329-a1f8ae952881
 	github.com/use-go/onvif v0.0.1

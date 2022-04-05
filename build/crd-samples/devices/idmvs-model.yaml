@@ -1,0 +1,13 @@
+apiVersion: devices.kubeedge.io/v1alpha2
+kind: DeviceModel
+metadata:
+  name: idmvs-model
+  namespace: default
+spec:
+  properties:
+    - name: barcode
+      description: Value of barcode
+      type:
+        string:
+          accessMode: ReadOnly
+          defaultValue: "none"

@@ -1,0 +1,59 @@
+{
+	"deviceInstances": [
+		{
+			"id": "idmvs-instance-01",
+			"name": "idmvs-instance-01",
+			"model": "idmvs-model",
+			"twins": [
+				{
+					"propertyName": "barcode",
+					"desired": {
+						"value": "none",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					},
+					"reported": {
+						"value": "none",
+						"metadata": {
+							"timestamp": "1550049403598",
+							"type": "string"
+						}
+					}
+				}
+			],
+			"propertyVisitors": [
+				{
+					"name": "barcode",
+					"propertyName": "barcode",
+					"modelName": "idmvs-model"
+				}
+			]
+		}
+	],
+	"deviceModels": [
+		{
+			"name": "idmvs-model",
+			"properties": [
+				{
+					"name": "barcode",
+					"dataType": "string",
+					"description": "Value of barcode",
+					"accessMode": "ReadOnly",
+					"defaultValue": "none"
+				}
+			]
+		}
+	],
+	"protocols": [
+		{
+			"protocolConfig": null,
+			"protocolCommonConfig": {
+				"customizedValues": {
+					"TCPport": 8000
+				}
+			}
+		}
+	]
+}

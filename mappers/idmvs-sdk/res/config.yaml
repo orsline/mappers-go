@@ -1,0 +1,14 @@
+mqtt:
+  server: mqtts://10.116.32.0:18883 # mqtt's ip:port
+  servername: 192.168.137.51 # server's ip
+  username: "wq"
+  password: "1234"
+  clientId: "test"
+  certification: ../res/client.crt
+  privatekey: ../res/client.key
+  caCert: ../res/ca.crt
+http:
+  certification: ""
+  privatekey: ""
+  caCert: ""
+configmap: ../res/idmvs.json

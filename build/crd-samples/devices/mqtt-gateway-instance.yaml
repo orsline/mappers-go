@@ -1,0 +1,83 @@
+apiVersion: devices.kubeedge.io/v1alpha2
+kind: Device
+metadata:
+  name: gateway-instance-01
+  labels:
+    model: gateway-model
+spec:
+  deviceModelRef:
+    name: gateway-model
+  nodeSelector:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: ''
+            operator: In
+            values:
+              - edge51 #pls give your edge node name
+  propertyVisitors:
+    - propertyName: temperature1
+      customizedProtocol:
+        protocolName: zlan
+        configData:
+          feature: temperature1 #pls give the same name as the gateway JSON
+    - propertyName: temperature2
+      customizedProtocol:
+        protocolName: zlan
+        configData:
+          feature: temperature2 #pls give the same name as the gateway JSON
+    - propertyName: humidity1
+      customizedProtocol:
+        protocolName: zlan
+        configData:
+          feature: humidity1 #pls give the same name as the gateway JSON
+    - propertyName: humidity2
+      customizedProtocol:
+        protocolName: zlan
+        configData:
+          feature: humidity2 #pls give the same name as the gateway JSON
+status:
+  twins:
+    - propertyName: temperature1
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "15"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "15"
+    - propertyName: temperature2
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "15"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "15"
+    - propertyName: humidity1
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "30"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "30"
+    - propertyName: humidity2
+      reported:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "30"
+      desired:
+        metadata:
+          timestamp: '1550049403598'
+          type: int
+        value: "30"
