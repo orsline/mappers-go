@@ -1,0 +1,31 @@
+apiVersion: devices.kubeedge.io/v1alpha2
+kind: DeviceModel
+metadata:
+  name: gateway-model
+  namespace: default
+spec:
+  properties:
+    - name: temperature1
+      description: temperature by device 1
+      type:
+        int:
+          accessMode: ReadOnly
+          defaultValue: 15
+    - name: temperature2
+      description: temperature by device 2
+      type:
+        int:
+          accessMode: ReadOnly
+          defaultValue: 15
+    - name: humidity1
+      description: humidity by device 2
+      type:
+        int:
+          accessMode: ReadOnly
+          defaultValue: 15
+    - name: humidity2
+      description: humidity by device 2
+      type:
+        int:
+          accessMode: ReadOnly
+          defaultValue: 15

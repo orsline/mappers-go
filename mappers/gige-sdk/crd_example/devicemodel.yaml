@@ -1,0 +1,57 @@
+apiVersion: devices.kubeedge.io/v1alpha1
+kind: DeviceModel
+metadata:
+  name: camera-instance-model       #模板名 以Basler acA640为例 各相机属性名不尽相同  请使用工具查询
+spec:
+  properties:                       #设备属性
+    - name: PixelFormat             #属性名
+      type:
+        string:                     #属性值对应类型
+          accessMode: ReadWrite     #访问控制
+          defaultValue: 'Mono8'     #默认值
+    - name: image                   #必选属性  用于抓图
+      type:
+        bytes:                      #不可更改
+          accessMode: ReadOnly      #不可更改
+    - name: AutoFunctionAOIUsageWhiteBalance  #自动白平衡使能
+      type:
+        boolean:
+          accessMode: ReadWrite
+          defaultValue: false
+    - name: AcquisitionFrameRateEnable        #获取帧率设置使能
+        type:
+          boolean:
+            accessMode: ReadWrite
+            defaultValue: false
+    - name: ExposureTimeAbs         #曝光时间绝对值
+        type:
+          float:
+            accessMode: ReadWrite
+            defaultValue: 8000.0
+            minimum: 4
+            maximum: 1000000
+            uint: 'us'
+    - name: Width                   #图片宽
+        type:
+          int:
+            accessMode: ReadWrite
+            defaultValue: 659
+            minimum: 0
+            maximum: 659
+    - name: Height                  #图片高
+        type:
+          int:
+            accessMode: ReadWrite
+            defaultValue: 494
+            minimum: 0
+            maximum: 494
+    - name: OffsetX                 #兴趣区X轴偏移
+        type:
+          int:
+            accessMode: ReadWrite
+            defaultValue: 0
+    - name: OffsetY                 #兴趣区Y轴偏移
+        type:
+          int:
+            accessMode: ReadWrite
+            defaultValue: 0
