@@ -1,8 +1,8 @@
-FROM alpine:3.14
+FROM ubuntu:16.04
 WORKDIR /
 COPY ./res ./res
 COPY ./bin ./bin
-COPY ./baumer/Ubuntu-16.04/arm64 ./bin/cti
+COPY ./baumer/Ubuntu-16.04/x86_64 ./bin/cti
 ENV GENICAM_GENTL64_PATH /bin/cti
 RUN sed -i '1a /bin/genicam/Linux64_ARM' /etc/ld.so.conf && ldconfig
 RUN sysctl -w net.core.rmem_max=33554432 && sysctl -w net.core.netdev_max_backlog=2000 && sysctl -w net.core.netdev_budget=600
