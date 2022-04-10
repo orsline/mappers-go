@@ -1,0 +1,14 @@
+mqtt:
+  server: mqtt://192.168.66.10:1883
+  servername: 192.168.66.10
+  username: "huawei"
+  password: "huawei"
+  clientId: "modbus_device_test"
+  certification:
+  privatekey:
+  caCert:
+http:
+  certification: ../res/server.pem
+  privatekey: ../res/server.key
+  caCert: ../res/httpca.pem
+configmap: ../res/mqtt.json
