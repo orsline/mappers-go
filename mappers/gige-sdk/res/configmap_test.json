@@ -1,330 +1,405 @@
 {
-	"deviceInstances": [{
-		"id": "camera-instance",
-		"name": "camera-instance",
-		"protocol": "GigEVision",
-		"model": "camera-instance-model",
-		"twins": [{"propertyName": "Width",
-			"desired": {
-				"value": "659",
-				"metadata": {
-					"timestamp": "1550049403598",
-					"type": "int"
-				}
-			},
-			"reported": {
-				"value": "659",
-				"metadata": {
-					"timestamp": "1550049403598",
-					"type": "int"
-				}
-			}
-
-		}
-		,{	"propertyName": "PixelFormat",
-				"desired": {
-					"value": "Mono8",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "string"
-					}
-				},
-				"reported": {
-					"value": "Mono8",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "string"
-					}
-				}
-
-		}
-		,{
-				"propertyName": "Height",
-				"desired": {
-					"value": "494",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "int"
-					}
-				},
-				"reported": {
-					"value": "494",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "int"
-					}
-				}
-			}
-		,{
-				"propertyName": "OffsetX",
-				"desired": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "int"
-					}
-				},
-				"reported": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "int"
-					}
-				}
-			}
-		,{
-				"propertyName": "OffsetY",
-				"desired": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "int"
-					}
-				},
-				"reported": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "int"
-					}
-				}
-			}
-		,{
-				"propertyName": "AcquisitionFrameRateAbs",
-				"desired": {
-					"value": "10",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "float"
-					}
-				},
-				"reported": {
-					"value": "10",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "float"
-					}
-				}
-			},{
-				"propertyName": "AcquisitionFrameRateEnable",
-				"desired": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "boolean"
-					}
-				},
-				"reported": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "boolean"
-					}
-				}
-			}
-		,{
-				"propertyName": "ExposureTimeAbs",
-				"desired": {
-					"value": "8000",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "float"
-					}
-				},
-				"reported": {
-					"value": "8000",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "float"
-					}
-				}
-			}
-		,{
-				"propertyName": "AutoFunctionAOIUsageWhiteBalance",
-				"desired": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "boolean"
-					}
-				},
-				"reported": {
-					"value": "0",
-					"metadata": {
-						"timestamp": "1550049403598",
-						"type": "boolean"
-					}
-				}
-			}
-	],
-		"propertyVisitors": [{
-			"name": "PixelFormat",
-			"propertyName": "PixelFormat",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "PixelFormat",
-				"DataType": "string"
-			}
-		}, {
-			"name": "image",
-			"propertyName": "image",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "image",
-				"DataType": "bytes"
-			}
-		}, {
-			"name": "Width",
-			"propertyName": "Width",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "Width",
-				"DataType": "int"
-			}
-		}, {
-			"name": "Height",
-			"propertyName": "Height",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "Height",
-				"DataType": "int"
-			}
-		}, {
-			"name": "OffsetX",
-			"propertyName": "OffsetX",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "OffsetX",
-				"DataType": "int"
-			}
-		}, {
-			"name": "OffsetY",
-			"propertyName": "OffsetY",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "OffsetY",
-				"DataType": "int"
-			}
-		}, {
-			"name": "AcquisitionFrameRateAbs",
-			"propertyName": "AcquisitionFrameRateAbs",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "AcquisitionFrameRateAbs",
-				"DataType": "float"
-			}
-		}, {
-			"name": "AcquisitionFrameRateEnable",
-			"propertyName": "AcquisitionFrameRateEnable",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "AcquisitionFrameRateEnable",
-				"DataType": "boolean"
-			}
-		}, {
-			"name": "ExposureTimeAbs",
-			"propertyName": "ExposureTimeAbs",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "ExposureTimeAbs",
-				"DataType": "float"
-			}
-		}, {
-			"name": "AutoFunctionAOIUsageWhiteBalance",
-			"propertyName": "AutoFunctionAOIUsageWhiteBalance",
-			"modelName": "camera-instance-model",
-			"protocol": "GigEVision",
-			"visitorConfig": {
-				"FeatureName": "AutoFunctionAOIUsageWhiteBalance",
-				"DataType": "boolean"
-			}
-		}
-		]
-	}],
-	"deviceModels": [{
-		"name": "camera-instance-model",
-		"properties": [{
-			"name": "PixelFormat",
-			"dataType": "string",
-			"accessMode": "ReadWrite",
-			"defaultValue": "Mono8"
-		}, {
-			"name": "image",
-			"dataType": "bytes",
-			"accessMode": "ReadOnly"
-		}, {
-			"name": "AutoFunctionAOIUsageWhiteBalance",
-			"dataType": "boolean",
-			"accessMode": "ReadWrite",
-			"defaultValue": false
-		}, {
-			"name": "AcquisitionFrameRateEnable",
-			"dataType": "boolean",
-			"accessMode": "ReadWrite",
-			"defaultValue": false
-		}, {
-			"name": "ExposureTimeAbs",
-			"dataType": "float",
-			"accessMode": "ReadWrite",
-			"defaultValue": 8000.0,
-			"minimum": 4,
-			"maximum": 1000000,
-			"uint": "us"
-		}, {
-			"name": "AcquisitionFrameRateAbs",
-			"dataType": "float",
-			"accessMode": "ReadWrite",
-			"defaultValue": 10.0,
-			"minimum": 0,
-			"maximum": 1000000,
-			"uint": "Hz"
-		}, {
-			"name": "Width",
-			"dataType": "int",
-			"accessMode": "ReadWrite",
-			"defaultValue": 659,
-			"minimum": 0,
-			"maximum": 659
-		}, {
-			"name": "Height",
-			"dataType": "int",
-			"accessMode": "ReadWrite",
-			"defaultValue": 494,
-			"minimum": 0,
-			"maximum": 494
-		}, {
-			"name": "OffsetX",
-			"dataType": "int",
-			"accessMode": "ReadWrite",
-			"defaultValue": 0,
-			"minimum": 0,
-			"maximum": 0
-		}, {
-			"name": "OffsetY",
-			"dataType": "int",
-			"accessMode": "ReadWrite",
-			"defaultValue": 0,
-			"minimum": 0,
-			"maximum": 0
-		}]
-	}],
-	"protocols": [{
-		"name": "GigEVision",
-		"protocol": "GigEVision",
-		"protocolConfig": {
-
-		},
-		"protocolCommonConfig": {
-			"deviceSN": "23636483"
-		}
-	}]
+  "deviceInstances": [
+    {
+      "id": "camera-instance",
+      "name": "camera-instance",
+      "protocol": "customized-protocol-camera-instance",
+      "model": "camera-instance-model",
+      "twins": [
+        {
+          "propertyName": "PixelFormat",
+          "desired": {
+            "value": "Mono8",
+            "metadata": {
+              "type": "string"
+            }
+          },
+          "reported": {
+            "value": "Mono8",
+            "metadata": {
+              "timestamp": "1649241983609",
+              "type": "string"
+            }
+          }
+        },
+        {
+          "propertyName": "Width",
+          "desired": {
+            "value": "600",
+            "metadata": {
+              "type": "integer"
+            }
+          },
+          "reported": {
+            "value": "600",
+            "metadata": {
+              "timestamp": "1649241986906",
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "propertyName": "Height",
+          "desired": {
+            "value": "494",
+            "metadata": {
+              "type": "integer"
+            }
+          },
+          "reported": {
+            "value": "494",
+            "metadata": {
+              "timestamp": "1649241980996",
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "propertyName": "OffsetX",
+          "desired": {
+            "value": "0",
+            "metadata": {
+              "type": "integer"
+            }
+          },
+          "reported": {
+            "value": "0",
+            "metadata": {
+              "timestamp": "1649241961561",
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "propertyName": "OffsetY",
+          "desired": {
+            "value": "0",
+            "metadata": {
+              "type": "integer"
+            }
+          },
+          "reported": {
+            "value": "0",
+            "metadata": {
+              "timestamp": "1649241099825",
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "propertyName": "AcquisitionFrameRateAbs",
+          "desired": {
+            "value": "10",
+            "metadata": {
+              "type": "float"
+            }
+          },
+          "reported": {
+            "value": "10",
+            "metadata": {
+              "timestamp": "1649241956655",
+              "type": "float"
+            }
+          }
+        },
+        {
+          "propertyName": "AcquisitionFrameRateEnable",
+          "desired": {
+            "value": "0",
+            "metadata": {
+              "type": "boolean"
+            }
+          },
+          "reported": {
+            "value": "0",
+            "metadata": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "propertyName": "ExposureTimeAbs",
+          "desired": {
+            "value": "8000",
+            "metadata": {
+              "type": "float"
+            }
+          },
+          "reported": {
+            "value": "8000",
+            "metadata": {
+              "timestamp": "1649241378031",
+              "type": "float"
+            }
+          }
+        },
+        {
+          "propertyName": "AutoFunctionAOIUsageWhiteBalance",
+          "desired": {
+            "value": "0",
+            "metadata": {
+              "type": "boolean"
+            }
+          },
+          "reported": {
+            "value": "0",
+            "metadata": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "propertyName": "image",
+          "desired": {
+            "value": "",
+            "metadata": {
+              "type": "bytes"
+            }
+          },
+          "reported": {
+            "value": "",
+            "metadata": {
+              "type": "bytes"
+            }
+          }
+        }
+      ],
+      "propertyVisitors": [
+        {
+          "name": "PixelFormat",
+          "propertyName": "PixelFormat",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "PixelFormat"
+            }
+          }
+        },
+        {
+          "name": "image",
+          "propertyName": "image",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": -1,
+          "collectCycle": -1,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "image"
+            }
+          }
+        },
+        {
+          "name": "Width",
+          "propertyName": "Width",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "Width"
+            }
+          }
+        },
+        {
+          "name": "Height",
+          "propertyName": "Height",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "Height"
+            }
+          }
+        },
+        {
+          "name": "OffsetX",
+          "propertyName": "OffsetX",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "OffsetX"
+            }
+          }
+        },
+        {
+          "name": "OffsetY",
+          "propertyName": "OffsetY",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "OffsetY"
+            }
+          }
+        },
+        {
+          "name": "AcquisitionFrameRateAbs",
+          "propertyName": "AcquisitionFrameRateAbs",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "AcquisitionFrameRateAbs"
+            }
+          }
+        },
+        {
+          "name": "AcquisitionFrameRateEnable",
+          "propertyName": "AcquisitionFrameRateEnable",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "AcquisitionFrameRateEnable"
+            }
+          }
+        },
+        {
+          "name": "ExposureTimeAbs",
+          "propertyName": "ExposureTimeAbs",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "ExposureTimeAbs"
+            }
+          }
+        },
+        {
+          "name": "AutoFunctionAOIUsageWhiteBalance",
+          "propertyName": "AutoFunctionAOIUsageWhiteBalance",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 500000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "AutoFunctionAOIUsageWhiteBalance"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "deviceModels": [
+    {
+      "name": "camera-instance-model",
+      "properties": [
+        {
+          "name": "PixelFormat",
+          "dataType": "string",
+          "accessMode": "ReadWrite",
+          "defaultValue": "Mono8"
+        },
+        {
+          "name": "image",
+          "dataType": "bytes",
+          "accessMode": "ReadOnly"
+        },
+        {
+          "name": "AutoFunctionAOIUsageWhiteBalance",
+          "dataType": "boolean",
+          "accessMode": "ReadWrite",
+          "defaultValue": false
+        },
+        {
+          "name": "AcquisitionFrameRateEnable",
+          "dataType": "boolean",
+          "accessMode": "ReadWrite",
+          "defaultValue": false
+        },
+        {
+          "name": "ExposureTimeAbs",
+          "dataType": "float",
+          "accessMode": "ReadWrite",
+          "defaultValue": 8000,
+          "minimum": 4,
+          "maximum": 100000,
+          "unit": "us"
+        },
+        {
+          "name": "AcquisitionFrameRateAbs",
+          "dataType": "float",
+          "accessMode": "ReadWrite",
+          "defaultValue": 10,
+          "minimum": 0,
+          "maximum": 0,
+          "unit": "Hz"
+        },
+        {
+          "name": "Width",
+          "dataType": "int",
+          "accessMode": "ReadWrite",
+          "defaultValue": 659,
+          "minimum": 0,
+          "maximum": 659
+        },
+        {
+          "name": "Height",
+          "dataType": "int",
+          "accessMode": "ReadWrite",
+          "defaultValue": 494,
+          "minimum": 0,
+          "maximum": 494
+        },
+        {
+          "name": "OffsetX",
+          "dataType": "int",
+          "accessMode": "ReadWrite",
+          "defaultValue": 0,
+          "minimum": 0,
+          "maximum": 0
+        },
+        {
+          "name": "OffsetY",
+          "dataType": "int",
+          "accessMode": "ReadWrite",
+          "defaultValue": 0,
+          "minimum": 0,
+          "maximum": 0
+        }
+      ]
+    }
+  ],
+  "protocols": [
+    {
+      "name": "customized-protocol-camera-instance",
+      "protocol": "customized-protocol",
+      "protocolConfig": {
+        "protocolName": "GigEVision"
+      },
+      "protocolCommonConfig": {
+        "customizedValues": {
+          "deviceSN": "23636483"
+        }
+      }
+    }
+  ]
 }

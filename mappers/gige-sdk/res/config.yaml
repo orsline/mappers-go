@@ -8,7 +8,7 @@ mqtt:
   privatekey: ../res/client.key
   caCert: ../res/ca.crt
 http:
-  certification: ../res/server.pem
-  privatekey: ../res/server.key
+  certification: ""
+  privatekey: ""
   caCert: ""
 configmap: ../res/configmap_test.json

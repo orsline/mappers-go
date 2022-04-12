@@ -30,8 +30,8 @@ func NewHttpClient(dic *di.Container) *HttpClient {
 	return &HttpClient{
 		IP:             "0.0.0.0",
 		Port:           "1215",
-		WriteTimeout:   5 * time.Second,
-		ReadTimeout:    5 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		ReadTimeout:    10 * time.Second,
 		restController: httpadapter.NewRestController(mux.NewRouter(), dic),
 	}
 }

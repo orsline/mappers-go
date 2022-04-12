@@ -19,6 +19,9 @@ func SetVisitor(instanceID string, twin configmap.Twin, drivers models.ProtocolD
 		klog.V(4).Info(instanceID + ":" + twin.PropertyName + " is ReadOnly")
 		return nil
 	}
+	if len(twin.Desired.Value) == 0 {
+		return nil
+	}
 	value, err := common.Convert(twin.PVisitor.PProperty.DataType, twin.Desired.Value)
 	if err != nil {
 		klog.Errorf("Failed to convert value as %s : %v", twin.PVisitor.PProperty.DataType, err)

@@ -2,19 +2,21 @@ package service
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"sync"
+
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/clients/httpclient"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/clients/mqttclient"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/common"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/config"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/configmap"
+	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/controller"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/httpadapter"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/instancepool"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/pkg/di"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/pkg/models"
 	"k8s.io/klog/v2"
-	"os"
-	"os/signal"
-	"sync"
 )
 
 var (
@@ -126,6 +128,11 @@ func (ms *MapperService) InitMapperService(serviceName string, c config.Config, 
 			return ms.deviceMutex
 		},
 	})
+	err = controller.InitDeviceConfig(ms.driver, ms.dic)
+	if err != nil {
+		klog.Errorf("Failed to init device, please check your interface:%v", err)
+		os.Exit(1)
+	}
 	ms.httpClient = httpclient.NewHttpClient(ms.dic)
 	err = ms.httpClient.Init(c)
 	if err != nil {

@@ -4,12 +4,11 @@ package service
 import (
 	"context"
 	"fmt"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/common"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/config"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/configmap"
-	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/controller"
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/mqttadapter"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"k8s.io/klog/v2"
 	"os"
 )
@@ -24,11 +23,6 @@ func Bootstrap(serviceName string, deviceInterface interface{}) {
 	ms.InitMapperService(serviceName, c, deviceInterface)
 	klog.V(1).Info("MapperService Init Successful......")
 
-	err = controller.InitDeviceConfig(ms.driver, ms.dic)
-	if err != nil {
-		klog.Errorf("Failed to init device, please check your interface:%v", err)
-		os.Exit(1)
-	}
 	for id, instance := range ms.deviceInstances {
 		ms.wg.Add(1)
 		go publishMqtt(id, instance)

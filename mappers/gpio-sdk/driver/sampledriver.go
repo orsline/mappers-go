@@ -14,7 +14,6 @@ type GPIOProtocolConfig struct {
 }
 
 type ProtocolConfigData struct {
-
 }
 
 type GPIOProtocolCommonConfig struct {
@@ -22,7 +21,6 @@ type GPIOProtocolCommonConfig struct {
 }
 
 type CommonCustomizedValues struct {
-
 }
 type GPIOVisitorConfig struct {
 	ProtocolName      string `json:"protocolName"`
@@ -35,10 +33,10 @@ type VisitorConfigData struct {
 
 // GPIO Realize the structure of random number
 type GPIO struct {
-	mutex                 sync.Mutex
-	protocolConfig GPIOProtocolConfig
-	protocolCommonConfig  GPIOProtocolCommonConfig
-	visitorConfig         GPIOVisitorConfig
+	mutex                sync.Mutex
+	protocolConfig       GPIOProtocolConfig
+	protocolCommonConfig GPIOProtocolCommonConfig
+	visitorConfig        GPIOVisitorConfig
 }
 
 // InitDevice Sth that need to do in the first
@@ -62,7 +60,7 @@ func (d *GPIO) SetConfig(protocolCommon, visitor, protocol []byte) (pin int, err
 	if protocolCommon != nil {
 		if err = json.Unmarshal(protocolCommon, &d.protocolCommonConfig); err != nil {
 			fmt.Printf("Unmarshal ProtocolCommonConfig error: %v\n", err)
-			return  0, err
+			return 0, err
 		}
 	}
 	if visitor != nil {
@@ -78,7 +76,7 @@ func (d *GPIO) SetConfig(protocolCommon, visitor, protocol []byte) (pin int, err
 			return 0, err
 		}
 	}
-	return  d.visitorConfig.Pin,nil
+	return d.visitorConfig.Pin, nil
 
 }
 
@@ -130,7 +128,7 @@ func (d *GPIO) WriteDeviceData(data interface{}, protocolCommon, visitor, protoc
 	} else if strings.ToUpper(status) == "ON" {
 		pinClient.Output()
 		pinClient.High()
-	}else{
+	} else {
 		fmt.Println("the command should be \"ON\" or \"OFF\"")
 	}
 	return nil
@@ -144,12 +142,9 @@ func (d *GPIO) StopDevice() (err error) {
 	return nil
 }
 
-
 // GetDeviceStatus is an interface to get the device status true is OK , false is DISCONNECTED
 func (d *GPIO) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
-	if err := rpio.Open(); err != nil {
-		return false
-	}else{
-		return true
-	}
+	err := rpio.Open()
+	rpio.Close()
+	return err == nil
 }
