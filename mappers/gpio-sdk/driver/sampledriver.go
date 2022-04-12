@@ -68,7 +68,6 @@ func (d *GPIO) SetConfig(protocolCommon, visitor, protocol []byte) (pin int, err
 			fmt.Printf("Unmarshal visitorConfig error: %v\n", err)
 			return 0, err
 		}
-
 	}
 	if protocol != nil {
 		if err = json.Unmarshal(protocol, &d.protocolConfig); err != nil {
@@ -77,7 +76,6 @@ func (d *GPIO) SetConfig(protocolCommon, visitor, protocol []byte) (pin int, err
 		}
 	}
 	return d.visitorConfig.Pin, nil
-
 }
 
 // ReadDeviceData  is an interface that reads data from a specific device, data is a type of string
@@ -92,16 +90,11 @@ func (d *GPIO) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data in
 		return "", err
 	}
 	// Unmap gpio memory when done
-	defer func() {
-		err := rpio.Close()
-		if err != nil {
-		}
-	}()
+	defer rpio.Close()
 	if pinClient.Read() == 0 {
 		return "OFF", nil
-	} else {
-		return "ON", nil
 	}
+	return "ON", nil
 }
 
 // WriteDeviceData is an interface that write data to a specific device, data's DataType is Consistent with configmap
@@ -116,11 +109,7 @@ func (d *GPIO) WriteDeviceData(data interface{}, protocolCommon, visitor, protoc
 		return err
 	}
 	// Unmap gpio memory when done
-	defer func() {
-		err := rpio.Close()
-		if err != nil {
-		}
-	}()
+	defer rpio.Close()
 	pinClient := rpio.Pin(pin)
 	if strings.ToUpper(status) == "OFF" {
 		pinClient.Output()
@@ -145,6 +134,9 @@ func (d *GPIO) StopDevice() (err error) {
 // GetDeviceStatus is an interface to get the device status true is OK , false is DISCONNECTED
 func (d *GPIO) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
 	err := rpio.Open()
-	rpio.Close()
-	return err == nil
+	defer rpio.Close()
+	if err != nil {
+		return false
+	}
+	return true
 }

@@ -17,7 +17,7 @@ int open_device(unsigned int** device, char* deviceSN, char** error)
         *error = (char *)dlerror();
 		return -1;
     }
-    int result = (*fptr)(device, deviceId, error);
+    int result = (*fptr)(device, deviceSN, error);
 	dlclose(handle);
     return result;
 }
@@ -85,12 +85,10 @@ int close_device (unsigned int* device)
     typedef void (*FPTR)(unsigned int*);
     handle = dlopen("../bin/librcapi_arm64.so", 1);
     if(handle == NULL){
-        *error = (char *)dlerror();
 		return -1;
     }
     FPTR fptr = (FPTR)dlsym(handle, "close_device");
     if(fptr == NULL){
-        *error = (char *)dlerror();
 		return -1;
     }
     (*fptr)(device);
