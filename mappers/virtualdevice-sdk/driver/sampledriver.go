@@ -14,7 +14,7 @@ type VirtualDeviceProtocolConfig struct {
 }
 
 type ProtocolConfigData struct {
-	DeviceId int `json:"deviceId,omitempty"`
+	DeviceID int `json:"deviceID,omitempty"`
 }
 
 type VirtualDeviceProtocolCommonConfig struct {
@@ -43,7 +43,7 @@ type VirtualDevice struct {
 }
 
 // InitDevice Sth that need to do in the first
-// If you need mount a persistent connection, you should provide parameters in configmap's protocolCommon.
+// If you need mount a persistent connection, you should provIDe parameters in configmap's protocolCommon.
 // and handle these parameters in the following function
 func (vd *VirtualDevice) InitDevice(protocolCommon []byte) (err error) {
 	if protocolCommon != nil {
@@ -62,7 +62,7 @@ func (vd *VirtualDevice) InitDevice(protocolCommon []byte) (err error) {
 }
 
 // SetConfig Parse the configmap's raw json message
-func (vd *VirtualDevice) SetConfig(protocolCommon, visitor, protocol []byte) (dataType string, deviceId int, err error) {
+func (vd *VirtualDevice) SetConfig(protocolCommon, visitor, protocol []byte) (dataType string, deviceID int, err error) {
 	vd.mutex.Lock()
 	defer vd.mutex.Unlock()
 	vd.NewClient()
@@ -77,7 +77,6 @@ func (vd *VirtualDevice) SetConfig(protocolCommon, visitor, protocol []byte) (da
 			fmt.Printf("Unmarshal visitorConfig error: %v\n", err)
 			return "", 0, err
 		}
-
 	}
 
 	if protocol != nil {
@@ -87,24 +86,24 @@ func (vd *VirtualDevice) SetConfig(protocolCommon, visitor, protocol []byte) (da
 		}
 	}
 	dataType = vd.visitorConfig.DataType
-	deviceId = vd.virtualProtocolConfig.DeviceId
+	deviceID = vd.virtualProtocolConfig.DeviceID
 	return
 }
 
-// ReadDeviceData  is an interface that reads data from a specific device, data is a type of string
+// ReadDeviceData  is an interface that reads data from a specific device, data's dataType is consistent with configmap
 func (vd *VirtualDevice) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data interface{}, err error) {
 	// Parse raw json message to get a virtualDevice instance
-	DataTye, DeviceId, err := vd.SetConfig(protocolCommon, visitor, protocol)
+	DataTye, DeviceID, err := vd.SetConfig(protocolCommon, visitor, protocol)
 	if err != nil {
 		return nil, err
 	}
 	if DataTye == "int" {
-		if vd.client[DeviceId] == 0 {
+		if vd.client[DeviceID] == 0 {
 			return 0, errors.New("vd.limit should not be 0")
 		}
-		return rand.Intn(int(vd.client[DeviceId])), nil
+		return rand.Intn(int(vd.client[DeviceID])), nil
 	} else if DataTye == "float" {
-		if vd.client[DeviceId] == 0 {
+		if vd.client[DeviceID] == 0 {
 			return 0, errors.New("vd.limit should not be 0")
 		}
 		// Simulate device that have time delay
@@ -115,14 +114,14 @@ func (vd *VirtualDevice) ReadDeviceData(protocolCommon, visitor, protocol []byte
 	}
 }
 
-// WriteDeviceData is an interface that write data to a specific device, data's DataType is Consistent with configmap
+// WriteDeviceData is an interface that write data to a specific device, data's dataType is consistent with configmap
 func (vd *VirtualDevice) WriteDeviceData(data interface{}, protocolCommon, visitor, protocol []byte) (err error) {
 	// Parse raw json message to get a virtualDevice instance
-	_, DeviceId, err := vd.SetConfig(protocolCommon, visitor, protocol)
+	_, DeviceID, err := vd.SetConfig(protocolCommon, visitor, protocol)
 	if err != nil {
 		return err
 	}
-	vd.client[DeviceId] = data.(int64)
+	vd.client[DeviceID] = data.(int64)
 	return nil
 }
 
@@ -140,9 +139,9 @@ func (vd *VirtualDevice) NewClient() {
 	if vd.client == nil {
 		vd.client = make(map[int]int64)
 	}
-	if _, ok := vd.client[vd.virtualProtocolConfig.DeviceId]; ok {
-		if vd.client[vd.virtualProtocolConfig.DeviceId] == 0 {
-			vd.client[vd.virtualProtocolConfig.DeviceId] = 100
+	if _, ok := vd.client[vd.virtualProtocolConfig.DeviceID]; ok {
+		if vd.client[vd.virtualProtocolConfig.DeviceID] == 0 {
+			vd.client[vd.virtualProtocolConfig.DeviceID] = 100
 		}
 	}
 }
@@ -150,8 +149,5 @@ func (vd *VirtualDevice) NewClient() {
 // GetDeviceStatus is an interface to get the device status true is OK , false is DISCONNECTED
 func (vd *VirtualDevice) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
 	_, _, err := vd.SetConfig(protocolCommon, visitor, protocol)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }

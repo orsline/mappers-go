@@ -81,7 +81,7 @@ func (d *Template) SetConfig(protocolCommon, visitor, protocol []byte) (err erro
 	return
 }
 
-// ReadDeviceData  is an interface that reads data from a specific device, data is a type of string
+// ReadDeviceData  is an interface that reads data from a specific device, data's dataType is consistent with configmap
 func (d *Template) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data interface{}, err error) {
 	// Parse raw json message to get a Template instance
 	err = d.SetConfig(protocolCommon, visitor, protocol)
@@ -92,7 +92,7 @@ func (d *Template) ReadDeviceData(protocolCommon, visitor, protocol []byte) (dat
 	return nil, err
 }
 
-// WriteDeviceData is an interface that write data to a specific device, data's DataType is Consistent with configmap
+// WriteDeviceData is an interface that write data to a specific device, data's dataType is consistent with configmap
 func (d *Template) WriteDeviceData(data interface{}, protocolCommon, visitor, protocol []byte) (err error) {
 	// Parse raw json message to get a Template instance
 	err = d.SetConfig(protocolCommon, visitor, protocol)

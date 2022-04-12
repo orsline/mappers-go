@@ -178,7 +178,7 @@ The functions and urls are as follows.
 Method=<font color=green>**GET**</font>  
 https://127.0.0.1:1215/api/v1/device/id/deviceInstances-ID/propertyName
 
-3. Set device's config  
+3. Set device's config(If you want to use this method,cloudCore's `Twin.Desired` should be null)  
 Method=<font color=#60D6F4>**PUT**</font> 
 https://127.0.0.1:1215/api/v1/device/id/deviceInstances-ID?propertyName=Value
 4. Add a deviceInstance  

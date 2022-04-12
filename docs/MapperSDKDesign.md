@@ -23,8 +23,8 @@ About the device control/data, there're three types:
     }
 }]
 ```
-The desired value will be set to the device, the reported value is from device and sent to the device controller. User could define the collect/report cycle and times.
- 2. State:  
+The desired value will be set to the device, the reported value is from device and sent to the device controller. User could define the collect/report cycle and times.  
+2. State:  
 Device status. Device status will be collected periodically and sent to device controller.
 ## Motivation
 Decouple the device driver part from the cloud side communication part, so that mapper developers can focus on the control of the device. Provide restful API for more convenient access to third-party apps.  
@@ -81,7 +81,7 @@ according to your own CRD definition
    Method=<font color=green>**GET**</font>  
    `https://127.0.0.1:1215/api/v1/device/id/deviceInstances-ID/propertyName`
 
-3. Set device's config  
+3. Set device's config(If you want to use this method,cloudCore's `Twin.Desired` should be null)  
    Method=<font color=#60D6F4>**PUT**</font>
    https://127.0.0.1:1215/api/v1/device/id/deviceInstances-ID?propertyName=Value
 4. Add a deviceInstance  

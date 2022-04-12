@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gitee.com/ascend/mapper-go-sdk/mapper-sdk-go/pkg/service"
-	"gitee.com/ascend/mapper-go-sdk/mappers/Template/driver"
+	"github.com/kubeedge/mappers-go/mapper-sdk-go/pkg/service"
+	"github.com/kubeedge/mappers-go/mappers/Template/driver"
 )
 
 // main Template device program entry

@@ -5,7 +5,6 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-
 // MqttClient is parameters for Mqtt client.
 type MqttClient struct {
 	Qos        byte
