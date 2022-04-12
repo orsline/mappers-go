@@ -1,14 +1,14 @@
 mqtt:
-  server: mqtt://192.168.66.10:1883
-  servername: 192.168.66.10
-  username: "huawei"
-  password: "huawei"
-  clientId: "gige_device_test"
+  server: mqtts://10.116.32.0:18883
+  servername: 192.168.137.51
+  username: "wq"
+  password: "1234"
+  clientId: "test"
   certification: ../res/client.crt
   privatekey: ../res/client.key
   caCert: ../res/ca.crt
 http:
-  certification: ../res/server.pem
-  privatekey: ../res/server.key
+  certification: ""
+  privatekey: ""
   caCert: ""
 configmap: ../res/configmap_test.json
