@@ -1,14 +1,14 @@
 mqtt:
-  server: mqtts://10.116.32.0:18883
-  servername: 192.168.137.51
-  username: "wq"
-  password: "1234"
-  clientId: "test"
-  certification: ../res/client.crt
-  privatekey: ../res/client.key
-  caCert: ../res/ca.crt
+  server: mqtt://127.0.0.1:1883 # mqtt's ip:port
+  servername: 127.0.0.1 # server's ip
+  username: 
+  password: 
+  clientId: 
+  certification: 
+  privatekey: 
+  caCert: 
 http:
   certification: ""
   privatekey: ""
   caCert: ""
-configmap: ../res/configmap_test.json
+configmap: /opt/kubeedge/deviceProfile.json
