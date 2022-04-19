@@ -7,6 +7,9 @@ metadata:
 spec:
   deviceModelRef:
     name: led-model
+  protocol:
+    customizedProtocol:
+      protocolName: gpio
   nodeSelector:
     nodeSelectorTerms:
       - matchExpressions:

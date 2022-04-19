@@ -24,4 +24,5 @@ extern "C" void find_device() {
 		}
 		system[i]->close();
 	}
+	rcg::System::clearSystems();
 }

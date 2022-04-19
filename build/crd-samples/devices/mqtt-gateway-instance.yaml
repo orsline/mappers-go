@@ -7,6 +7,14 @@ metadata:
 spec:
   deviceModelRef:
     name: gateway-model
+  protocol:
+    common:
+      customizedValues:
+        IP: 127.0.0.1
+        port: 1883
+        topic: mqttsub #pls give the topic that you set
+    customizedProtocol:
+      protocolName: mqtt
   nodeSelector:
     nodeSelectorTerms:
       - matchExpressions:

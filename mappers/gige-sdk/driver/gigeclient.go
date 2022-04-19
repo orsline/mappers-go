@@ -102,6 +102,10 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"k8s.io/klog/v2"
+	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
@@ -148,36 +152,60 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN, FeatureName string, value inte
 		}
 		return err
 	}
-	var msg *C.char
-	defer C.free(unsafe.Pointer(msg))
-	signal := C.set_value(gigEClient.dev[DeviceSN], C.CString(FeatureName), C.CString(convert), &msg)
-	if signal != 0 {
-		errorMsg := fmt.Sprintf("Set command from device %s type failed: %s", DeviceSN, (string)(C.GoString(msg)))
-		err = errors.New(errorMsg)
-		if signal == 1 || signal == 2 {
-			gigEClient.dev[DeviceSN] = nil
-			go gigEClient.ReConnectDevice(DeviceSN)
+	if strings.EqualFold(FeatureName, "ImageFormat") {
+		if strings.EqualFold(convert, "png") {
+			gigEClient.deviceMeta[DeviceSN].imageFormat = "png"
+		} else if strings.EqualFold(convert, "pnm") {
+			gigEClient.deviceMeta[DeviceSN].imageFormat = "pnm"
+		} else if strings.EqualFold(convert, "jpeg") {
+			gigEClient.deviceMeta[DeviceSN].imageFormat = "jpeg"
+		} else {
+			errorMsg := fmt.Sprintf("Set %s's image format failed, it only support format jpeg、 png or pnm.", DeviceSN)
+			err = errors.New(errorMsg)
+			return err
 		}
-		return err
+		return nil
+	} else if strings.EqualFold(FeatureName, "ImageURL") {
+		convert = strings.TrimSpace(convert)
+		_, err := url.Parse(convert)
+		if err != nil {
+			errorMsg := fmt.Sprintf("Set imageURL failed because of incorrect format, message: %s", err)
+			err = errors.New(errorMsg)
+			return err
+		}
+		gigEClient.deviceMeta[DeviceSN].imageURL = convert
+		gigEClient.PostImage(DeviceSN)
+		return nil
+	} else {
+		var msg *C.char
+		defer C.free(unsafe.Pointer(msg))
+		signal := C.set_value(gigEClient.deviceMeta[DeviceSN].dev, C.CString(FeatureName), C.CString(convert), &msg)
+		if signal != 0 {
+			errorMsg := fmt.Sprintf("Set command from device %s type failed: %s", DeviceSN, (string)(C.GoString(msg)))
+			err = errors.New(errorMsg)
+			if signal == 1 || signal == 2 {
+				gigEClient.deviceMeta[DeviceSN].deviceStatus = false
+				go gigEClient.ReConnectDevice(DeviceSN)
+			}
+			return err
+		}
+		return nil
 	}
-	return nil
 }
 
 func (gigEClient *GigEVisionDevice) Get(DeviceSN string, FeatureName string) (results string, err error) {
-	var imageFormat = C.CString("png") //png or pnm
-	defer C.free(unsafe.Pointer(imageFormat))
-	if strings.EqualFold(FeatureName, "image") {
+	if strings.EqualFold(FeatureName, "Image") {
 		var imageBuffer *byte
 		var size int
 		var p = &imageBuffer
 		var msg *C.char
 		defer C.free(unsafe.Pointer(msg))
-		signal := C.get_image(gigEClient.dev[DeviceSN], imageFormat, (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
+		signal := C.get_image(gigEClient.deviceMeta[DeviceSN].dev, C.CString(gigEClient.deviceMeta[DeviceSN].imageFormat), (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
 		if signal != 0 {
 			errorMsg := fmt.Sprintf("Failed to get %s's images: %s", DeviceSN, (string)(C.GoString(msg)))
 			err = errors.New(errorMsg)
 			if signal != 1 {
-				gigEClient.dev[DeviceSN] = nil
+				gigEClient.deviceMeta[DeviceSN].deviceStatus = false
 				go gigEClient.ReConnectDevice(DeviceSN)
 			}
 			return "", err
@@ -188,15 +216,35 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string, FeatureName string) (re
 		bufferHdr.Len = size
 		bufferHdr.Cap = size
 		results = base64.StdEncoding.EncodeToString(buffer)
+	} else if strings.EqualFold(FeatureName, "ImageFormat") {
+		if gigEClient.deviceMeta[DeviceSN].imageFormat != "" {
+			results = gigEClient.deviceMeta[DeviceSN].imageFormat
+		} else {
+			errorMsg := fmt.Sprintf("Maybe init %s's image format failed, it only support format png or pnm.", DeviceSN)
+			err = errors.New(errorMsg)
+			return "", err
+		}
+	} else if strings.EqualFold(FeatureName, "ImageURL") {
+		if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
+			results = gigEClient.deviceMeta[DeviceSN].imageURL
+		} else {
+			errorMsg := fmt.Sprintf("Maybe init %s's image format failed, it only support format png or pnm.", DeviceSN)
+			err = errors.New(errorMsg)
+			return "", err
+		}
+		gigEClient.PostImage(DeviceSN)
+		return results, nil
 	} else {
 		var msg *C.char
 		var value *C.char
-		signal := C.get_value(gigEClient.dev[DeviceSN], C.CString(FeatureName), &value, &msg)
+		signal := C.get_value(gigEClient.deviceMeta[DeviceSN].dev, C.CString(FeatureName), &value, &msg)
 		if signal != 0 {
 			errorMsg := fmt.Sprintf("Get command from device %s's failed: %s", DeviceSN, (string)(C.GoString(msg)))
 			err = errors.New(errorMsg)
-			gigEClient.dev[DeviceSN] = nil
-			go gigEClient.ReConnectDevice(DeviceSN)
+			if signal == 1 {
+				gigEClient.deviceMeta[DeviceSN].deviceStatus = false
+				go gigEClient.ReConnectDevice(DeviceSN)
+			}
 			return "", err
 		}
 		results = C.GoString(value)
@@ -207,19 +255,75 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string, FeatureName string) (re
 func (gigEClient *GigEVisionDevice) NewClient() (err error) {
 	var msg *C.char
 	var dev *C.uint
-	if gigEClient.dev == nil {
-		gigEClient.dev = make(map[string]*C.uint)
+	if gigEClient.deviceMeta == nil {
+		gigEClient.deviceMeta = make(map[string]*DeviceMeta)
 	}
-	if _, ok := gigEClient.dev[gigEClient.protocolCommonConfig.DeviceSN]; !ok {
-		if gigEClient.dev[gigEClient.protocolCommonConfig.DeviceSN] == nil {
+	if _, ok := gigEClient.deviceMeta[gigEClient.protocolCommonConfig.DeviceSN]; !ok {
+		if gigEClient.deviceMeta[gigEClient.protocolCommonConfig.DeviceSN] == nil {
 			signal := C.open_device(&dev, C.CString(gigEClient.protocolCommonConfig.DeviceSN), &msg)
 			if signal != 0 {
-				errorMsg := fmt.Sprintf("Failed to open device %s failed: %s", gigEClient.protocolCommonConfig.DeviceSN, (string)(C.GoString(msg)))
-				err = errors.New(errorMsg)
-				return err
+				klog.Infof("Failed to open device %s failed: %s", gigEClient.protocolCommonConfig.DeviceSN, (string)(C.GoString(msg)))
+				gigEClient.deviceMeta[gigEClient.protocolCommonConfig.DeviceSN] = &DeviceMeta{
+					dev:          nil,
+					deviceStatus: false,
+					imageFormat:  "jpeg",
+					imageURL:     "http://192.168.137.61:8081/image_infer",
+				}
+				go gigEClient.ReConnectDevice(gigEClient.protocolCommonConfig.DeviceSN)
+				return nil
 			}
-			gigEClient.dev[gigEClient.protocolCommonConfig.DeviceSN] = dev
+			gigEClient.deviceMeta[gigEClient.protocolCommonConfig.DeviceSN] = &DeviceMeta{
+				dev:          dev,
+				deviceStatus: true,
+				imageFormat:  "jpeg",
+				imageURL:     "http://192.168.137.61:8081/image_infer",
+			}
 		}
 	}
 	return nil
+}
+
+func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
+	var imageBuffer *byte
+	var size int
+	var p = &imageBuffer
+	var msg *C.char
+	defer C.free(unsafe.Pointer(msg))
+	signal := C.get_image(gigEClient.deviceMeta[DeviceSN].dev, C.CString(gigEClient.deviceMeta[DeviceSN].imageFormat), (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
+	if signal != 0 {
+		fmt.Printf("Failed to get %s's images: %s\n", DeviceSN, (string)(C.GoString(msg)))
+		if signal != 1 {
+			gigEClient.deviceMeta[DeviceSN].deviceStatus = false
+			go gigEClient.ReConnectDevice(DeviceSN)
+		}
+		return
+	}
+	go func() {
+		var buffer []byte
+		var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
+		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
+		bufferHdr.Len = size
+		bufferHdr.Cap = size
+		postStr := base64.URLEncoding.EncodeToString(buffer)
+		v := url.Values{}
+		v.Set("gigEImage", postStr)
+		body := ioutil.NopCloser(strings.NewReader(v.Encode()))
+		req, _ := http.NewRequest(http.MethodPost, gigEClient.deviceMeta[DeviceSN].imageURL, body)
+		if req == nil {
+			fmt.Printf("Failed to post %s's images: URL can't POST\n", DeviceSN)
+			return
+		}
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+		client := &http.Client{}
+		resp, _ := client.Do(req)
+		if resp == nil {
+			fmt.Printf("Failed to post %s's images: URL no reaction\n", DeviceSN)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Println("response Status:", resp.Status)
+		fmt.Println("response Headers:", resp.Header)
+		data, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println("response Body:", string(data))
+	}()
 }

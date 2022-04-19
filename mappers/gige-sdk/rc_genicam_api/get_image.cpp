@@ -11,6 +11,7 @@ private:
 
 	std::string msg;
 };
+
 unsigned int storeBuffer(rcg::ImgFmt fmt, const rcg::Buffer* buffer, unsigned char** image_buffer, uint32_t part, char** err, size_t yoffset = 0, size_t height = 0) {
 	unsigned int buf = 0;
 	// store image
@@ -18,6 +19,9 @@ unsigned int storeBuffer(rcg::ImgFmt fmt, const rcg::Buffer* buffer, unsigned ch
 		rcg::Image image(buffer, part);
 		if (fmt == rcg::ImgFmt::PNG) {
 			buf = storeBufferPNG(image, image_buffer, yoffset, height);
+		}
+		else if (fmt == rcg::ImgFmt::JPEG) {
+			buf = storeBufferJPEG(image, image_buffer, yoffset, height);
 		}
 		else {
 			buf = storeBufferPNM(image, image_buffer, yoffset, height);
@@ -48,11 +52,10 @@ int storeBufferPNM(const rcg::Image& image, unsigned char** image_buffer, size_t
 
 	switch (format)
 	{
-	case Mono8: // store 8 bit monochrome image
+	case Mono8:
 	case Confidence8:
 	case Error8:
 	{
-		//full_name = ensureNewFileName(name + ".pgm");
 		std::string s = "P5\n" + std::to_string(width) + " " + std::to_string(height) + "\n" + std::to_string(255) + "\n";
 		*image_buffer = (unsigned char*)malloc(s.length() + height * width);
 		size = int(s.length() + height * width);
@@ -71,7 +74,7 @@ int storeBufferPNM(const rcg::Image& image, unsigned char** image_buffer, size_t
 	break;
 
 	case Mono16:
-	case Coord3D_C16: // store 16 bit monochrome image
+	case Coord3D_C16:
 	{
 		std::string s = "P5\n" + std::to_string(width) + " " + std::to_string(height) + "\n" + std::to_string(65535) + "\n";
 		*image_buffer = (unsigned char*)malloc(s.length() + 2 * height * width);
@@ -104,7 +107,7 @@ int storeBufferPNM(const rcg::Image& image, unsigned char** image_buffer, size_t
 	}
 	break;
 
-	case YCbCr411_8: // convert and store as color image
+	case YCbCr411_8:
 	case YCbCr422_8:
 	case YUV422_8:
 	{
@@ -146,7 +149,7 @@ int storeBufferPNM(const rcg::Image& image, unsigned char** image_buffer, size_t
 	}
 	break;
 
-	default: // try to store as color image
+	default:
 	{
 		std::unique_ptr<uint8_t[]> rgb_pixel(new uint8_t[3 * width * height]);
 
@@ -159,14 +162,12 @@ int storeBufferPNM(const rcg::Image& image, unsigned char** image_buffer, size_t
 
 		if (rcg::convertImage(rgb_pixel.get(), 0, p, format, width, height, px)) {
 			p = rgb_pixel.get();
-
 			std::string s = "P6\n" + std::to_string(width) + " " + std::to_string(height) + "\n" + std::to_string(255) + "\n";
 			*image_buffer = (unsigned char*)malloc(s.length() + 3 * height * width);
 			size = int(s.length() + 3 * height * width);
 			buf = *image_buffer;
 			memcpy(buf, s.c_str(), s.length());
 			buf += s.length();
-
 			for (size_t k = 0; k < height; k++) {
 				for (size_t i = 0; i < width; i++) {
 					*buf++ = *p++;
@@ -199,7 +200,7 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 
 	switch (format)
 	{
-	case Mono8: // store 8 bit monochrome image
+	case Mono8:
 	case Confidence8:
 	case Error8:
 	{
@@ -209,20 +210,19 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 		if (!out) {
 			throw new IOException("Cannot store file: " + full_name);
 		}
-
 		png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 		png_infop info = png_create_info_struct(png);
+		unsigned char* png_s = (unsigned char*)png;
 		setjmp(png_jmpbuf(png));
 
 		// write header
-
 		png_init_io(png, out);
 		png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_GRAY,
 			PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
 			PNG_FILTER_TYPE_DEFAULT);
 		png_write_info(png, info);
-		// write image body
 
+		// write image body
 		p += (width + px) * yoffset;
 		for (size_t k = 0; k < height; k++) {
 			png_write_row(png, const_cast<png_bytep>(p));
@@ -231,7 +231,8 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 
 		// close file
 		png_write_end(png, info);
-
+		unsigned char* png_e = (unsigned char*)png;
+		std::cout << png_s << "  " << png_e << std::endl;
 		fseek(out, 0, SEEK_END);
 		size = (unsigned int)ftell(out);
 		*image_buffer = (unsigned char*)malloc(size * sizeof(char));
@@ -244,9 +245,8 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 	break;
 
 	case Mono16:
-	case Coord3D_C16: // store 16 bit monochrome image
+	case Coord3D_C16:
 	{
-		// open file and init
 		std::string full_name = "test.png";
 		FILE* out = fopen(full_name.c_str(), "wb+");
 		if (!out) {
@@ -257,15 +257,11 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 		png_infop info = png_create_info_struct(png);
 		setjmp(png_jmpbuf(png));
 
-		// write header
-
 		png_init_io(png, out);
 		png_set_IHDR(png, info, width, height, 16, PNG_COLOR_TYPE_GRAY,
 			PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
 			PNG_FILTER_TYPE_DEFAULT);
 		png_write_info(png, info);
-
-		// write image body
 
 		if (!image.isBigEndian()) {
 			png_set_swap(png);
@@ -277,9 +273,7 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 			p += 2 * width + px;
 		}
 
-		// close file
 		png_write_end(png, info);
-
 		fseek(out, 0, SEEK_END);
 		size = (unsigned int)ftell(out);
 		*image_buffer = (unsigned char*)malloc(size * sizeof(char));
@@ -291,11 +285,10 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 	}
 	break;
 
-	case YCbCr411_8: // convert and store as color image
+	case YCbCr411_8:
 	case YCbCr422_8:
 	case YUV422_8:
 	{
-		// open file and init
 		std::string full_name = "test.png";
 		FILE* out = fopen(full_name.c_str(), "wb+");
 		if (!out) {
@@ -306,14 +299,12 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 		png_infop info = png_create_info_struct(png);
 		setjmp(png_jmpbuf(png));
 
-		// write header
 		png_init_io(png, out);
 		png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGB,
 			PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
 			PNG_FILTER_TYPE_DEFAULT);
 		png_write_info(png, info);
 
-		// write image body
 
 		uint8_t* tmp = new uint8_t[3 * width];
 
@@ -355,7 +346,7 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 	}
 	break;
 
-	default: // try to store as color image
+	default:
 	{
 		std::unique_ptr<uint8_t[]> rgb_pixel(new uint8_t[3 * width * height]);
 
@@ -368,8 +359,6 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 
 		if (rcg::convertImage(rgb_pixel.get(), 0, p, format, width, height, px)) {
 			p = rgb_pixel.get();
-
-			// open file and init
 			std::string full_name = "test.png";
 			FILE* out = fopen(full_name.c_str(), "wb+");
 			if (!out) {
@@ -380,22 +369,16 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 			png_infop info = png_create_info_struct(png);
 			setjmp(png_jmpbuf(png));
 
-			// write header
-
 			png_init_io(png, out);
 			png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGB,
 				PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
 				PNG_FILTER_TYPE_DEFAULT);
 			png_write_info(png, info);
 
-			// write image body
-
 			for (size_t k = 0; k < height; k++) {
 				png_write_row(png, p);
 				p += 3 * width;
 			}
-
-			// close file
 
 			png_write_end(png, info);
 
@@ -419,6 +402,230 @@ int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t
 	return size;
 }
 
+int storeBufferJPEG(const rcg::Image& image, unsigned char** image_buffer, size_t yoffset, size_t height) {
+	unsigned int size = 0;
+	size_t width = image.getWidth();
+	size_t real_height = image.getHeight();
+	if (height == 0) height = real_height;
+	yoffset = (((yoffset) < (real_height)) ? (yoffset) : (real_height));
+	height = (((height) < (real_height - yoffset)) ? (height) : (real_height - yoffset));
+	const unsigned char* p = static_cast<const unsigned char*>(image.getPixels());
+	size_t px = image.getXPadding();
+	uint64_t format = image.getPixelFormat();
+
+	switch (format)
+	{
+	case Mono8:
+	case Confidence8:
+	case Error8:
+	{
+		//initialize JPEG compression objects, and specify the error handler
+		jpeg_compress_struct jpeg{};
+		jpeg_error_mgr jerr;
+		jpeg.err = jpeg_std_error(&jerr);
+		jpeg_create_compress(&jpeg);
+
+		//specify the target file for JPEG storage
+		std::string full_name = "test.jpeg";
+		FILE* out = fopen(full_name.c_str(), "wb+");
+		if (!out) {
+			throw new IOException("Cannot store file: " + full_name);
+		}
+		jpeg_stdio_dest(&jpeg, out);
+
+		//Set compression parameters:
+		//image width, 
+		//image height, 
+		//number of color channels (gray image 1, color image 3), 
+		//color space (jcs_grayscale represents gray image, jcs_rgb represents color image), 
+		//and compression quality
+		jpeg.image_width = width;
+		jpeg.image_height = height;
+		jpeg.input_components = 1;
+		jpeg.in_color_space = JCS_GRAYSCALE;
+		jpeg_set_defaults(&jpeg);
+		jpeg_set_quality(&jpeg, 100, TRUE);
+
+		// write image body
+		JSAMPROW row_pointer;
+		jpeg_start_compress(&jpeg, TRUE);
+		p += (width + px) * yoffset;
+		for (size_t k = 0; k < height; k++) {
+			row_pointer = (unsigned char*)p;
+			jpeg_write_scanlines(&jpeg, &row_pointer, 1);
+			p += width + px;
+		}
+
+		// close file
+		fseek(out, 0, SEEK_END);
+		size = (unsigned int)ftell(out);
+		*image_buffer = (unsigned char*)malloc(size * sizeof(char));
+		rewind(out);
+		fread(*image_buffer, 1, size, out);
+		fclose(out);
+		jpeg_destroy_compress(&jpeg);
+	}
+	break;
+
+	case Mono16:
+	case Coord3D_C16:
+	{
+		jpeg_compress_struct jpeg{};
+		jpeg_error_mgr jerr;
+		jpeg.err = jpeg_std_error(&jerr);
+		jpeg_create_compress(&jpeg);
+
+		std::string full_name = "test.jpeg";
+		FILE* out = fopen(full_name.c_str(), "wb+");
+		if (!out) {
+			throw new IOException("Cannot store file: " + full_name);
+		}
+		jpeg_stdio_dest(&jpeg, out);
+
+		jpeg.image_width = width;
+		jpeg.image_height = height;
+		jpeg.input_components = 2;
+		jpeg.in_color_space = JCS_GRAYSCALE;
+		jpeg_set_defaults(&jpeg);
+		jpeg_set_quality(&jpeg, 100, TRUE);
+
+		JSAMPROW row_pointer;
+		jpeg_start_compress(&jpeg, TRUE);
+		p += (2 * width + px) * yoffset;
+		for (size_t k = 0; k < height; k++) {
+			row_pointer = (unsigned char*)p;
+			jpeg_write_scanlines(&jpeg, &row_pointer, 1);
+			p += 2 * width + px;
+		}
+
+		fseek(out, 0, SEEK_END);
+		size = (unsigned int)ftell(out);
+		*image_buffer = (unsigned char*)malloc(size * sizeof(char));
+		rewind(out);
+		fread(*image_buffer, 1, size, out);
+		fclose(out);
+		jpeg_destroy_compress(&jpeg);
+	}
+	break;
+
+	case YCbCr411_8:
+	case YCbCr422_8:
+	case YUV422_8:
+	{
+		jpeg_compress_struct jpeg{};
+		jpeg_error_mgr jerr;
+		jpeg.err = jpeg_std_error(&jerr);
+		jpeg_create_compress(&jpeg);
+
+		std::string full_name = "test.jpeg";
+		FILE* out = fopen(full_name.c_str(), "wb+");
+		if (!out) {
+			throw new IOException("Cannot store file: " + full_name);
+		}
+		jpeg_stdio_dest(&jpeg, out);
+
+		jpeg.image_width = width;
+		jpeg.image_height = height;
+		jpeg.input_components = 3;
+		jpeg.in_color_space = JCS_RGB;
+		jpeg_set_defaults(&jpeg);
+		jpeg_set_quality(&jpeg, 100, TRUE);
+
+		uint8_t* tmp = new uint8_t[3 * width];
+		size_t pstep;
+		if (format == YCbCr411_8) {
+			pstep = (width >> 2) * 6 + px;
+		}
+		else {
+			pstep = (width >> 2) * 8 + px;
+		}
+
+		JSAMPROW row_pointer;
+		jpeg_start_compress(&jpeg, TRUE);
+		p += pstep * yoffset;
+		for (size_t k = 0; k < height; k++) {
+			if (format == YCbCr411_8) {
+				for (size_t i = 0; i < width; i += 4) {
+					rcg::convYCbCr411toQuadRGB(tmp + 3 * i, p, static_cast<int>(i));
+				}
+			}
+			else {
+				for (size_t i = 0; i < width; i += 4) {
+					rcg::convYCbCr422toQuadRGB(tmp + 3 * i, p, static_cast<int>(i));
+				}
+			}
+			row_pointer = (unsigned char*)p;
+			jpeg_write_scanlines(&jpeg, &row_pointer, 1);
+			p += pstep;
+		}
+
+		fseek(out, 0, SEEK_END);
+		size = (unsigned int)ftell(out);
+		*image_buffer = (unsigned char*)malloc(size * sizeof(char));
+		rewind(out);
+		fread(*image_buffer, 1, size, out);
+		fclose(out);
+		jpeg_destroy_compress(&jpeg);
+	}
+	break;
+
+	default:
+	{
+		std::unique_ptr<uint8_t[]> rgb_pixel(new uint8_t[3 * width * height]);
+		if (format == RGB8) {
+			p += (3 * width + px) * yoffset;
+		}
+		else {
+			p += (width + px) * yoffset;
+		}
+		if (rcg::convertImage(rgb_pixel.get(), 0, p, format, width, height, px)) {
+			p = rgb_pixel.get();
+			jpeg_compress_struct jpeg{};
+			jpeg_error_mgr jerr;
+			jpeg.err = jpeg_std_error(&jerr);
+			jpeg_create_compress(&jpeg);
+
+			std::string full_name = "test.jpeg";
+			FILE* out = fopen(full_name.c_str(), "wb+");
+			if (!out) {
+				throw new IOException("Cannot store file: " + full_name);
+			}
+			jpeg_stdio_dest(&jpeg, out);
+
+			jpeg.image_width = width;
+			jpeg.image_height = height;
+			jpeg.input_components = 3;
+			jpeg.in_color_space = JCS_RGB;
+			jpeg_set_defaults(&jpeg);
+			jpeg_set_quality(&jpeg, 100, TRUE);
+
+			JSAMPROW row_pointer;
+			jpeg_start_compress(&jpeg, TRUE);
+			for (size_t k = 0; k < height; k++) {
+				row_pointer = (unsigned char*)p;
+				jpeg_write_scanlines(&jpeg, &row_pointer, 1);
+				p += 3 * width;
+			}
+
+			fseek(out, 0, SEEK_END);
+			size = (unsigned int)ftell(out);
+			*image_buffer = (unsigned char*)malloc(size * sizeof(char));
+			rewind(out);
+			fread(*image_buffer, 1, size, out);
+			fclose(out);
+			jpeg_destroy_compress(&jpeg);
+		}
+		else {
+			throw IOException(std::string("storeImage(): Unsupported pixel format: ") +
+				GetPixelFormatName(static_cast<PfncFormat>(image.getPixelFormat())));
+		}
+	}
+	break;
+	}
+	remove("test.jpeg");
+	return size;
+}
+
 extern "C" int get_image(MyDevice myDevice, const char* imgfmt, unsigned char** image_buffer, int* size, char** err) {
 	*err = (char*)"";
 	int ret = 0;
@@ -430,6 +637,9 @@ extern "C" int get_image(MyDevice myDevice, const char* imgfmt, unsigned char** 
 		}
 		else if (!strncmp(imgfmt, "png", 3)) {
 			fmt = rcg::ImgFmt::PNG;
+		}
+		else if (!strncmp(imgfmt, "jpeg", 4)) {
+			fmt = rcg::ImgFmt::JPEG;
 		}
 
 		// open stream and get 1 image
@@ -452,6 +662,7 @@ extern "C" int get_image(MyDevice myDevice, const char* imgfmt, unsigned char** 
 					if (!buffer->getIsIncomplete()) {
 						// store images
 						*size = storeBuffer(fmt, buffer, image_buffer, 0, err);
+
 						if (*size == 0) {
 							buffers_incomplete++;
 							ret = 1;
@@ -476,7 +687,7 @@ extern "C" int get_image(MyDevice myDevice, const char* imgfmt, unsigned char** 
 			std::cout << std::endl;
 			std::cout << "Received buffers:   " << buffers_received << std::endl;
 			std::cout << "Incomplete buffers: " << buffers_incomplete << std::endl;
-
+			std::cout << "Image size: " << *size << std::endl;
 			// return error code if no images could be received
 			if (buffers_incomplete == buffers_received) {
 				ret = 1;

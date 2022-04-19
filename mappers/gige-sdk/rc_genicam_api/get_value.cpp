@@ -18,6 +18,7 @@ extern "C" int get_value(MyDevice myDevice, const char* key, char** value, char*
 		std::string e = ex.what();
 		*err = (char*)malloc(e.length());
 		strcpy(*err, ex.what());
+		rcg::System::clearSystems();
 	}
 	catch (const std::exception& ex) {
 		ret = 2;

@@ -8,7 +8,7 @@ help:
 	#   make docker :  pack binaries to image
 	@echo
 build:	
-	echo "\nexport GENICAM_GENTL64_PATH=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))baumer/Ubuntu-16.04/arm64" >> /etc/profile
+	echo "export GENICAM_GENTL64_PATH=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))baumer/Ubuntu-16.04/arm64" >> /etc/profile
 	source /etc/profile
 	sed -i '1a $(dir $(abspath $(lastword $(MAKEFILE_LIST))))bin/genicam/Linux64_ARM' /etc/ld.so.conf
 	ldconfig

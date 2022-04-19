@@ -40,7 +40,14 @@ type GigEVisionDevice struct {
 	mutex                sync.RWMutex
 	protocolCommonConfig GigEVisionDeviceProtocolCommonConfig
 	visitorConfig        GigEVisionDeviceVisitorConfig
-	dev                  map[string]*C.uint
+	deviceMeta           map[string]*DeviceMeta
+}
+
+type DeviceMeta struct {
+	dev          *C.uint
+	deviceStatus bool
+	imageFormat  string
+	imageURL     string
 }
 
 func (gigEClient *GigEVisionDevice) InitDevice(protocolCommon []byte) (err error) {
@@ -82,7 +89,7 @@ func (gigEClient *GigEVisionDevice) ReadDeviceData(protocolCommon, visitor, prot
 	if err != nil {
 		return nil, err
 	}
-	if gigEClient.dev[deviceSN] == nil {
+	if !gigEClient.deviceMeta[deviceSN].deviceStatus {
 		errorMsg := fmt.Sprintf("Device %s is unreachable and failed to read device data.", deviceSN)
 		err = errors.New(errorMsg)
 		return nil, err
@@ -100,7 +107,7 @@ func (gigEClient *GigEVisionDevice) WriteDeviceData(data interface{}, protocolCo
 	if err != nil {
 		return err
 	}
-	if gigEClient.dev[deviceSN] == nil {
+	if !gigEClient.deviceMeta[deviceSN].deviceStatus {
 		errorMsg := fmt.Sprintf("Device %s is unreachable and failed to get.", deviceSN)
 		err = errors.New(errorMsg)
 		return err
@@ -114,10 +121,11 @@ func (gigEClient *GigEVisionDevice) WriteDeviceData(data interface{}, protocolCo
 
 // StopDevice is an interface to disconnect a specific device
 func (gigEClient *GigEVisionDevice) StopDevice() (err error) {
-	for s := range gigEClient.dev {
-		if gigEClient.dev[s] != nil {
-			C.close_device(gigEClient.dev[s])
-			gigEClient.dev[s] = nil
+	for s := range gigEClient.deviceMeta {
+		if gigEClient.deviceMeta[s].deviceStatus {
+			C.close_device(gigEClient.deviceMeta[s].dev)
+			gigEClient.deviceMeta[s].dev = nil
+			gigEClient.deviceMeta[s].deviceStatus = false
 		}
 	}
 	fmt.Println("----------Stop GigE Device Successful----------")
@@ -126,45 +134,27 @@ func (gigEClient *GigEVisionDevice) StopDevice() (err error) {
 
 // GetDeviceStatus is an interface to get the device status true is OK , false is DISCONNECTED
 func (gigEClient *GigEVisionDevice) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
-	var msg *C.char
-	var value *C.char
-	featureName, deviceSN, err := gigEClient.SetConfig(protocolCommon, visitor)
-	if err != nil {
+	_, deviceSN, err := gigEClient.SetConfig(protocolCommon, visitor)
+	if err == nil {
 		return false
 	}
-	if gigEClient.dev[deviceSN] == nil {
-		return false
-	}
-	signal := C.get_value(gigEClient.dev[deviceSN], C.CString(featureName), &value, &msg)
-	if signal != 0 {
-		fmt.Printf("Device %s unconnected.\n", deviceSN)
-		gigEClient.dev[deviceSN] = nil
-		go gigEClient.ReConnectDevice(deviceSN)
-		return false
-	}
-	signal = C.set_value(gigEClient.dev[deviceSN], C.CString(featureName), value, &msg)
-	if signal != 0 {
-		fmt.Printf("Device %s unconnected.\n", deviceSN)
-		gigEClient.dev[deviceSN] = nil
-		go gigEClient.ReConnectDevice(deviceSN)
-		return false
-	}
-	return true
+	return gigEClient.deviceMeta[deviceSN].deviceStatus
 }
 
 func (gigEClient *GigEVisionDevice) ReConnectDevice(DeviceSN string) {
 	var msg *C.char
 	var dev *C.uint
+	gigEClient.deviceMeta[DeviceSN].dev = nil
 	for {
 		signal := C.open_device(&dev, C.CString(DeviceSN), &msg)
 		if signal != 0 {
 			fmt.Printf("Failed to restart device %s: %s\n", DeviceSN, (string)(C.GoString(msg)))
 			time.Sleep(5 * time.Second)
 		} else {
-			gigEClient.dev[DeviceSN] = dev
+			gigEClient.deviceMeta[DeviceSN].dev = dev
+			gigEClient.deviceMeta[DeviceSN].deviceStatus = true
 			break
 		}
 	}
 	fmt.Printf("Device %s restart success!\n", DeviceSN)
-	return
 }

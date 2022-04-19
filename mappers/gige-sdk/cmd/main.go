@@ -7,5 +7,5 @@ import (
 
 func main() {
 	gd := &driver.GigEVisionDevice{}
-	service.Bootstrap("GigECamera", gd)
+	service.Bootstrap("GigEVision", gd)
 }

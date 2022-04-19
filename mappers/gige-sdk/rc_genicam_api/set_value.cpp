@@ -14,6 +14,7 @@ extern "C" int set_value(MyDevice myDevice, const char* key, const char* value, 
 		std::string e = ex.what();
 		*err = (char*)malloc(e.length());
 		strcpy(*err, ex.what());
+		rcg::System::clearSystems();
 	}
 	catch (const std::exception& ex) {
 		ret = 2;

@@ -1,29 +1,38 @@
 apiVersion: devices.kubeedge.io/v1alpha2
 kind: DeviceModel
 metadata:
-  name: camera-instance-model       #模板名 以Basler acA640为例 各相机属性名不尽相同  请使用工具查询
+  name: camera-instance-model
 spec:
-  properties:                       #设备属性
-    - name: PixelFormat             #属性名
+  properties:
+    - name: PixelFormat
       type:
-        string:                     #属性值对应类型
-          accessMode: ReadWrite     #访问控制
-          defaultValue: 'Mono8'     #默认值
-    - name: image                   #必选属性  用于抓图
+        string:
+          accessMode: ReadWrite
+          defaultValue: 'Mono8'
+    - name: Image
       type:
-        bytes:                      #不可更改
-          accessMode: ReadOnly      #不可更改
-    - name: AutoFunctionAOIUsageWhiteBalance  #自动白平衡使能
+        bytes:
+          accessMode: ReadOnly
+    - name: ImageFormat
+      type:
+        boolean:
+          accessMode: ReadWrite
+          defaultValue: "jpeg"
+    - name: ImageURL
+      type:
+        string:
+          accessMode: ReadWrite
+    - name: AutoFunctionAOIUsageWhiteBalance
       type:
         boolean:
           accessMode: ReadWrite
           defaultValue: false
-    - name: AcquisitionFrameRateEnable        #获取帧率设置使能
+    - name: AcquisitionFrameRateEnable
       type:
         boolean:
           accessMode: ReadWrite
           defaultValue: false
-    - name: ExposureTimeAbs         #曝光时间绝对值
+    - name: ExposureTimeAbs
       type:
         float:
           accessMode: ReadWrite
@@ -31,32 +40,32 @@ spec:
           minimum: 4
           maximum: 100000
           unit: 'us'
-    - name: AcquisitionFrameRateAbs #帧率绝对值
+    - name: AcquisitionFrameRateAbs
       type:
         float:
           accessMode: ReadWrite
           defaultValue: 10.0
           unit: 'Hz'
-    - name: Width                   #图片宽
+    - name: Width
       type:
         int:
           accessMode: ReadWrite
           defaultValue: 659
           minimum: 0
           maximum: 659
-    - name: Height                  #图片高
+    - name: Height
       type:
         int:
           accessMode: ReadWrite
           defaultValue: 494
           minimum: 0
           maximum: 494
-    - name: OffsetX                 #兴趣区X轴偏移
+    - name: OffsetX
       type:
         int:
           accessMode: ReadWrite
           defaultValue: 0
-    - name: OffsetY                 #兴趣区Y轴偏移
+    - name: OffsetY
       type:
         int:
           accessMode: ReadWrite

@@ -7,6 +7,21 @@
       "model": "camera-instance-model",
       "twins": [
         {
+          "propertyName": "ImageURL",
+          "desired": {
+            "value": "",
+            "metadata": {
+              "type": "string"
+            }
+          },
+          "reported": {
+            "value": "192.168.137.61",
+            "metadata": {
+              "type": "string"
+            }
+          }
+        },
+        {
           "propertyName": "PixelFormat",
           "desired": {
             "value": "Mono8",
@@ -17,7 +32,6 @@
           "reported": {
             "value": "Mono8",
             "metadata": {
-              "timestamp": "1649241983609",
               "type": "string"
             }
           }
@@ -31,9 +45,8 @@
             }
           },
           "reported": {
-            "value": "600",
+            "value": "659",
             "metadata": {
-              "timestamp": "1649241986906",
               "type": "integer"
             }
           }
@@ -49,7 +62,6 @@
           "reported": {
             "value": "494",
             "metadata": {
-              "timestamp": "1649241980996",
               "type": "integer"
             }
           }
@@ -65,7 +77,6 @@
           "reported": {
             "value": "0",
             "metadata": {
-              "timestamp": "1649241961561",
               "type": "integer"
             }
           }
@@ -81,7 +92,6 @@
           "reported": {
             "value": "0",
             "metadata": {
-              "timestamp": "1649241099825",
               "type": "integer"
             }
           }
@@ -97,7 +107,6 @@
           "reported": {
             "value": "10",
             "metadata": {
-              "timestamp": "1649241956655",
               "type": "float"
             }
           }
@@ -128,7 +137,6 @@
           "reported": {
             "value": "8000",
             "metadata": {
-              "timestamp": "1649241378031",
               "type": "float"
             }
           }
@@ -149,7 +157,7 @@
           }
         },
         {
-          "propertyName": "image",
+          "propertyName": "Image",
           "desired": {
             "value": "",
             "metadata": {
@@ -162,16 +170,45 @@
               "type": "bytes"
             }
           }
+        },
+        {
+          "propertyName": "ImageFormat",
+          "desired": {
+            "value": "",
+            "metadata": {
+              "type": "string"
+            }
+          },
+          "reported": {
+            "value": "jpeg",
+            "metadata": {
+              "type": "string"
+            }
+          }
         }
       ],
       "propertyVisitors": [
+
         {
+          "name": "ImageURL",
+          "propertyName": "ImageURL",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 1000000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "ImageURL"
+            }
+          }
+        },{
           "name": "PixelFormat",
           "propertyName": "PixelFormat",
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -180,8 +217,8 @@
           }
         },
         {
-          "name": "image",
-          "propertyName": "image",
+          "name": "Image",
+          "propertyName": "Image",
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": -1,
@@ -189,7 +226,21 @@
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
-              "FeatureName": "image"
+              "FeatureName": "Image"
+            }
+          }
+        },
+        {
+          "name": "ImageFormat",
+          "propertyName": "ImageFormat",
+          "modelName": "camera-instance-model",
+          "protocol": "customized-protocol",
+          "reportCycle": 1000000000,
+          "collectCycle": 1000000000,
+          "visitorConfig": {
+            "protocolName": "GigEVision",
+            "configData": {
+              "FeatureName": "ImageFormat"
             }
           }
         },
@@ -199,7 +250,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -213,7 +264,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -227,7 +278,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -241,7 +292,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -255,7 +306,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -269,7 +320,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -283,7 +334,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -297,7 +348,7 @@
           "modelName": "camera-instance-model",
           "protocol": "customized-protocol",
           "reportCycle": 1000000000,
-          "collectCycle": 500000000,
+          "collectCycle": 1000000000,
           "visitorConfig": {
             "protocolName": "GigEVision",
             "configData": {
@@ -319,9 +370,20 @@
           "defaultValue": "Mono8"
         },
         {
-          "name": "image",
+          "name": "ImageURL",
+          "dataType": "string",
+          "accessMode": "ReadWrite"
+        },
+        {
+          "name": "Image",
           "dataType": "bytes",
           "accessMode": "ReadOnly"
+        },
+        {
+          "name": "ImageFormat",
+          "dataType": "string",
+          "accessMode": "ReadWrite",
+          "defaultValue": ""
         },
         {
           "name": "AutoFunctionAOIUsageWhiteBalance",

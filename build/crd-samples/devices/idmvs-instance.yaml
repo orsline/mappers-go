@@ -11,6 +11,8 @@ spec:
     common:
       customizedValues:
         TCPport: 1883
+    customizedProtocol:
+      protocolName: idmvs
   nodeSelector:
     nodeSelectorTerms:
       - matchExpressions:

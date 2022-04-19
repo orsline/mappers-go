@@ -4,7 +4,8 @@ extern "C" int open_device(MyDevice * myDevice, const char* device_serial_number
 	int ret = 0;
 	*err = (char*)"";
 	//std::cout << device_serial_number << std::endl;
-	*myDevice = MyDevice();
+	MyDevice myDev;
+	*myDevice = myDev;
 	(*myDevice).dev = rcg::getDevice(device_serial_number);
 	if ((*myDevice).dev != 0) {
 		try {

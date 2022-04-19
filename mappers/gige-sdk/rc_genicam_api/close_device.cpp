@@ -8,5 +8,6 @@ extern "C" int close_device(MyDevice myDevice) {
 	else {
 		ret = 1;
 	}
+	rcg::System::clearSystems();
 	return ret;
 }

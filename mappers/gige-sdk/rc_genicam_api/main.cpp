@@ -32,10 +32,12 @@ int main() {
 			if (key_value == "exit") {
 				break;
 			}
-			else if (key_value == "png" || key_value == "pnm") {
+			else if (key_value == "png" || key_value == "pnm" || key_value == "jpeg") {
 				a = clock();
 				const char* imgfmt = key_value.c_str();
 				ret = get_image(myDevice, imgfmt, &image_buffer, &size, &err);
+				b = clock();
+				std::cout << b - a << "  " << (double)((b - a) / CLOCKS_PER_SEC) << std::endl;
 				cout << "err:" << err << endl;
 				cout << "The size of image:" << size << endl;
 				std::string name = "test." + key_value;
@@ -45,8 +47,6 @@ int main() {
 					sb->sputc(*image_buffer);
 				}
 				out.close();
-				b = clock();
-				std::cout << b - a << "  " << (double)((b - a) / CLOCKS_PER_SEC) << std::endl;
 			}
 			else {
 				size_t k = key_value.find('=');

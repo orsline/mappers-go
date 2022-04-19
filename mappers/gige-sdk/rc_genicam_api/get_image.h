@@ -27,6 +27,7 @@
 #include <rc_genicam_api/image.h>
 #include <png.h>
 #include "const.h"
+#include <jpeglib.h>
 
 /**
   Returns 0 if the device propertie gets normally.
@@ -44,3 +45,4 @@
 extern "C" int get_image(MyDevice myDevice, const char* imgfmt, unsigned char** image_buffer, int* size, char** err);
 int storeBufferPNM(const rcg::Image& image, unsigned char** image_buffer, size_t yoffset, size_t height);
 int storeBufferPNG(const rcg::Image& image, unsigned char** image_buffer, size_t yoffset, size_t height);
+int storeBufferJPEG(const rcg::Image& image, unsigned char** image_buffer, size_t yoffset, size_t height);
