@@ -13,5 +13,4 @@ build:
 clean:
 	rm -rf ./bin/*
 docker:
-	docker build -f ./Dockerfile \
-		-t mapper-go-sdk-example:v0.0.1 .
+	docker build -f ./Dockerfile -t mapper-idmvs:v0.0.1 .
