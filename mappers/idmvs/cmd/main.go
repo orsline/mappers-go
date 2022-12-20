@@ -7,6 +7,6 @@ import (
 
 // main IDMVS device program entry
 func main() {
-	d := &driver.IDMVS{}
-	service.Bootstrap("IDMVS", d)
+	gd := &driver.IDMVS{}
+	service.Bootstrap("IDMVS", gd)
 }
