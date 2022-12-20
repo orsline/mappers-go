@@ -304,7 +304,9 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
 		bufferHdr.Len = size
 		bufferHdr.Cap = size
+		klog.V(4).Infof("buffer:%s", buffer[:100])
 		postStr := base64.URLEncoding.EncodeToString(buffer)
+		klog.V(4).Infof("poststr:%s", postStr[:100])
 		v := url.Values{}
 		v.Set("gigEImage", postStr)
 		body := ioutil.NopCloser(strings.NewReader(v.Encode()))

@@ -1,0 +1,4 @@
+sha,filename,url,lines,title,comment,priority,category,additional,id,private
+71d146a850cfe974ef5399e8bc7b3e8c9e1d1e65,extension-output-golang.go-#1,,1:0-1:0,,"这里只有2个属性需要本地修改吗�?,0""",,,170592ba-beb1-4767-bb96-197fc84e4d04,0,
+71d146a850cfe974ef5399e8bc7b3e8c9e1d1e65,\mappers\gige-sdk\driver\gigeclient.go,,205:12-205:12,,这个地方要比较结束符才行,2,,,ebdba471-16ed-4694-98a4-1270cfa441a5,0
+"71d146a850cfe974ef5399e8bc7b3e8c9e1d1e65","\mappers\gige-sdk\rc_genicam_api\get_image.cpp","","638:40-638:40","","the len must be N+1","0","","","f4bec5fa-b094-4c2b-9ab4-d7d3e55b4668","0"
