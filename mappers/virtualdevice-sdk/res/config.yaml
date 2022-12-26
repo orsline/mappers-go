@@ -11,4 +11,4 @@ http:
   certification: ""
   privatekey: ""
   caCert: ""
-configmap: opt/kubeedge/deviceProfile.json
+configmap: /opt/kubeedge/deviceProfile.json
