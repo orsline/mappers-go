@@ -1,9 +1,9 @@
-package driver
+package main
 
 import (
 	"fmt"
-	"k8s.io/klog/v2"
 	"os"
+	"time"
 )
 
 type Mode uint8
@@ -176,7 +176,8 @@ func GpioSetDirection(pin Pin, dir uint8) error {
 	if dir == 0 {
 		direction = "in"
 	}
-	err = os.WriteFile(fileName, []byte(direction), 0777)
+
+	err = os.WriteFile(fileName, []byte(direction), 0666)
 	if err != nil {
 		return err
 	}
@@ -196,16 +197,11 @@ func AscendGpioSetValue(pin Pin, val uint8) error {
 		return err
 	}
 
-	buff := []byte{val + '0'}
-
-	fmt.Println("buff =", buff)
-	fmt.Println("fileName =", fileName)
-	err = os.WriteFile(fileName, buff, 0644)
+	buff := []byte{val}
+	err = os.WriteFile(fileName, buff, 0666)
 	if err != nil {
-		fmt.Printf("os.WriteFile err = %v \n", err)
-		//return err
+		return err
 	}
-
 	return nil
 }
 
@@ -221,13 +217,9 @@ func AscendGpioGetValue(pin Pin, val *uint8) error {
 	}
 	readFile, err := os.ReadFile(fileName)
 	*val = readFile[0]
-
-	klog.Errorf("AscendGpioGetValue pin %v val = %v.", pin, *val)
 	return err
 }
 func gpioSetValue(pin Pin, val uint8) error {
-	//fmt.Println("gpioSetValue pin =", pin, "val = ", val)
-	klog.Errorf("gpioSetValue pin %v val = %v.", pin, val)
 	if pin == 0 || pin == 1 {
 		return AscendGpioSetValue(pin, val)
 	} else {
@@ -235,7 +227,6 @@ func gpioSetValue(pin Pin, val uint8) error {
 	}
 }
 func gpioGetValue(pin Pin, val *uint8) error {
-
 	if pin == 0 || pin == 1 {
 		return AscendGpioGetValue(pin, val)
 	} else {
@@ -243,21 +234,21 @@ func gpioGetValue(pin Pin, val *uint8) error {
 	}
 }
 
-//func main() {
-//	var pin int
-//	pin = 0
-//	pinClient := Pin(pin)
-//	for i := 0; i < 10; i++ {
-//		pinClient.SetOutPut()
-//		pinClient.SetLow()
-//		fmt.Println("set outPutlow")
-//		time.Sleep(time.Second * 1)
-//		pinClient.SetOutPut()
-//		pinClient.SetHight()
-//		fmt.Println("set outPut high")
-//		time.Sleep(time.Second * 1)
-//	}
-//}
+func main() {
+	var pin int
+	pin = 0
+	pinClient := Pin(pin)
+	for i := 0; i < 10; i++ {
+		pinClient.SetOutPut()
+		pinClient.SetLow()
+		fmt.Println("set outPut hight")
+		time.Sleep(time.Second)
+		pinClient.SetOutPut()
+		pinClient.SetHight()
+		fmt.Println("set outPut low")
+		time.Sleep(time.Second)
+	}
+}
 
 // IOCTL send ioctl
 //func IOCTL(fd, name, data uintptr) error {
