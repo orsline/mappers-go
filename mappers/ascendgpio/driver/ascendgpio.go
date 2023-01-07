@@ -1,9 +1,9 @@
-package main
+package driver
 
 import (
 	"fmt"
+	"k8s.io/klog/v2"
 	"os"
-	"time"
 )
 
 type Mode uint8
@@ -61,6 +61,7 @@ func (pin Pin) Read() uint8 {
 func WritePin(pin Pin, val uint8) {
 	gpioSetValue(pin, val)
 }
+
 func ReadPin(pin Pin) uint8 {
 	var val uint8
 	err := gpioGetValue(pin, &val)
@@ -82,9 +83,7 @@ func setPinMode(pin Pin, mode Mode) {
 	case Output:
 		f = out
 	}
-
 	GpioSetDirection(pin, f)
-
 }
 
 // Generic ioctl constants
@@ -156,8 +155,8 @@ func pca6416GpioSetValue(pin Pin, val uint8) (err error) {
 	return nil
 }
 func pca6416GpioGetValue(pin Pin, val *uint8) (err error) {
-
 	return nil
+
 }
 
 func GpioSetDirection(pin Pin, dir uint8) error {
@@ -177,8 +176,7 @@ func GpioSetDirection(pin Pin, dir uint8) error {
 	if dir == 0 {
 		direction = "in"
 	}
-
-	err = os.WriteFile(fileName, []byte(direction), 0666)
+	err = os.WriteFile(fileName, []byte(direction), 0777)
 	if err != nil {
 		return err
 	}
@@ -189,7 +187,6 @@ func GpioSetDirection(pin Pin, dir uint8) error {
 func AscendGpioSetValue(pin Pin, val uint8) error {
 	var fileName string
 	var err error
-
 	if pin == 0 {
 		fileName = ascend_gpio_0_val
 	} else if pin == 1 {
@@ -199,13 +196,16 @@ func AscendGpioSetValue(pin Pin, val uint8) error {
 		return err
 	}
 
-	//buf := bytes.NewBuffer([]byte{})
-	//binary.Write(buf, binary.LittleEndian, val)
-	buff := []byte{val}
-	err = os.WriteFile(fileName, buff, 0666)
+	buff := []byte{val + '0'}
+
+	fmt.Println("buff =", buff)
+	fmt.Println("fileName =", fileName)
+	err = os.WriteFile(fileName, buff, 0644)
 	if err != nil {
-		return err
+		fmt.Printf("os.WriteFile err = %v \n", err)
+		//return err
 	}
+
 	return nil
 }
 
@@ -220,11 +220,14 @@ func AscendGpioGetValue(pin Pin, val *uint8) error {
 		return err
 	}
 	readFile, err := os.ReadFile(fileName)
-
 	*val = readFile[0]
+
+	klog.Errorf("AscendGpioGetValue pin %v val = %v.", pin, *val)
 	return err
 }
 func gpioSetValue(pin Pin, val uint8) error {
+	//fmt.Println("gpioSetValue pin =", pin, "val = ", val)
+	klog.Errorf("gpioSetValue pin %v val = %v.", pin, val)
 	if pin == 0 || pin == 1 {
 		return AscendGpioSetValue(pin, val)
 	} else {
@@ -232,6 +235,7 @@ func gpioSetValue(pin Pin, val uint8) error {
 	}
 }
 func gpioGetValue(pin Pin, val *uint8) error {
+
 	if pin == 0 || pin == 1 {
 		return AscendGpioGetValue(pin, val)
 	} else {
@@ -239,23 +243,21 @@ func gpioGetValue(pin Pin, val *uint8) error {
 	}
 }
 
-func main() {
-	var pin Pin
-
-	pin = 0
-	pinClient := Pin(pin)
-	for i := 0; i < 10; i++ {
-		pinClient.SetOutPut()
-		pinClient.SetLow()
-		fmt.Println("set outPut hight")
-		time.Sleep(time.Second)
-		pinClient.SetOutPut()
-		pinClient.SetHight()
-		fmt.Println("set outPut low")
-		time.Sleep(time.Second)
-
-	}
-}
+//func main() {
+//	var pin int
+//	pin = 0
+//	pinClient := Pin(pin)
+//	for i := 0; i < 10; i++ {
+//		pinClient.SetOutPut()
+//		pinClient.SetLow()
+//		fmt.Println("set outPutlow")
+//		time.Sleep(time.Second * 1)
+//		pinClient.SetOutPut()
+//		pinClient.SetHight()
+//		fmt.Println("set outPut high")
+//		time.Sleep(time.Second * 1)
+//	}
+//}
 
 // IOCTL send ioctl
 //func IOCTL(fd, name, data uintptr) error {

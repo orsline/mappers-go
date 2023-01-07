@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/pkg/service"
-	"github.com/kubeedge/mappers-go/mappers/ascend-gpio/driver"
+	"github.com/kubeedge/mappers-go/mappers/ascendgpio/driver"
 )
 
 // main gpio device program entry
