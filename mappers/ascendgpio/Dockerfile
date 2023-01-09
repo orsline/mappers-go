@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
 WORKDIR /usr/local/bin
-COPY ./res /res
-COPY ./bin/main ./usr/local/bin/gpio
+COPY ./res /usr/local/res
+COPY ./bin /usr/local/bin
 ENTRYPOINT ["./gpio","--v","4"]
