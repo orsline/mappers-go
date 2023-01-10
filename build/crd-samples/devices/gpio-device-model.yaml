@@ -8,18 +8,18 @@ spec:
     - name: red-power-status
       description: red
       type:
-        int:
+        string:
           accessMode: ReadWrite
           defaultValue: "OFF"
     - name: yellow-power-status
       description: yellow
       type:
-        int:
+        string:
           accessMode: ReadWrite
-          defaultValue: "OFF"
+          defaultValue: "ON"
     - name: green-power-status
       description: green
       type:
-        int:
+        string:
           accessMode: ReadWrite
           defaultValue: "OFF"

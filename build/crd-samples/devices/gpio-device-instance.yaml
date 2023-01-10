@@ -9,30 +9,30 @@ spec:
     name: led-model
   protocol:
     customizedProtocol:
-      protocolName: gpio
+      protocolName: GPIO
   nodeSelector:
     nodeSelectorTerms:
       - matchExpressions:
           - key: ''
             operator: In
             values:
-              - edge51 #pls give your edge node name
+              - edge-a200 #pls give your edge node name
   propertyVisitors:
     - propertyName: yellow-power-status
       customizedProtocol:
-        protocolName: rpio
+        protocolName: GPIO
         configData:
-          pin: 17 #pls give your yellow light's Pin
+          pin: 0 #pls give your yellow light's Pin
     - propertyName: green-power-status
       customizedProtocol:
-        protocolName: rpio
+        protocolName: GPIO
         configData:
-          pin: 27 #pls give your green light's Pin
+          pin: 1 #pls give your green light's Pin
     - propertyName: red-power-status
       customizedProtocol:
-        protocolName: rpio
+        protocolName: GPIO
         configData:
-          pin: 22 #pls give your red light's Pin
+          pin: 2 #pls give your red light's Pin
 status:
   twins:
     - propertyName: yellow-power-status
@@ -40,7 +40,7 @@ status:
         metadata:
           timestamp: '1550049403598'
           type: string
-        value: "OFF"
+        value: "ON"
       desired:
         metadata:
           timestamp: '1550049403598'
