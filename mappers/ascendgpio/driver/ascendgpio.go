@@ -398,6 +398,7 @@ func GpioSetDirection(pin Pin, dir uint8) error {
 	}
 	err = os.WriteFile(fileName, []byte(direction), 0777)
 	if err != nil {
+		klog.Errorf("os.WriteFile fileName= %v err = %v ", fileName, err)
 		return err
 	}
 
@@ -422,27 +423,28 @@ func AscendGpioSetValue(pin Pin, val uint8) error {
 	fmt.Println("fileName =", fileName)
 	err = os.WriteFile(fileName, buff, 0644)
 	if err != nil {
-		fmt.Printf("os.WriteFile err = %v \n", err)
-		//return err
+		klog.Errorf("os.WriteFile fileName= %v err = %v ", fileName, err)
 	}
-
-	return nil
+	return err
 }
 
 func AscendGpioGetValue(pin Pin, val *uint8) error {
 	var fileName string
 	if pin == 0 {
-		fileName = ascend_gpio_0_dir
+		fileName = ascend_gpio_0_val
 	} else if pin == 1 {
-		fileName = ascend_gpio_1_dir
+		fileName = ascend_gpio_0_val
 	} else {
 		err := fmt.Errorf("pin number is incorrect,the correct num is must be 0,1")
 		return err
 	}
 	readFile, err := os.ReadFile(fileName)
 	*val = readFile[0]
-
-	klog.Errorf("AscendGpioGetValue pin %v val = %v.", pin, *val)
+	if(err != nill)
+	{
+		klog.Errorf("AscendGpioGetValue pin %v err = %v.", pin, err)
+	}
+	klog.Info("AscendGpioGetValue pin %v val = %v.", pin, *val)
 	return err
 }
 func isAscendPin(pin Pin) bool {
@@ -461,7 +463,6 @@ func gpioSetValue(pin Pin, val uint8) error {
 }
 func gpioGetValue(pin Pin, val *uint8) error {
 	if true == isAscendPin(pin) {
-
 		return AscendGpioGetValue(pin, val)
 	} else {
 		return pca6416GpioGetValue(pin, val)
