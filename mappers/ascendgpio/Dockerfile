@@ -8,4 +8,4 @@ echo "HwHiAiUser:!:17795:0:99999:7:::" >> /etc/shadow ; \
 chown -R 1000:1000 /usr/local/bin; \
 chown -R 1000:1000 /usr/local/res;
 USER 0
-ENTRYPOINT ["./gpio","--v","4"]
+ENTRYPOINT ["./gpio","--v","3"]
