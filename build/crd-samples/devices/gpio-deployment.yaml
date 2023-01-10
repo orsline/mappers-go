@@ -16,8 +16,8 @@ spec:
       nodeSelector:
         role: edgeNode
       containers:
-      - name: gpio-container-1
-        image: gpio-mapper-arm64:v2.0
+      - name: gpio-container
+        image: gpio-mapper-arm64:v1.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 1215
@@ -31,11 +31,11 @@ spec:
         - name: gpio0-direction
           mountPath: /sys/class/gpio/gpio504/direction
         - name: gpio1-direction
-          mountPath: /sys/class/gpio/gpio433/direction
+          mountPath: /sys/class/gpio/gpio444/direction
         - name: gpio0-value
           mountPath: /sys/class/gpio/gpio504/value
         - name: gpio1-value
-          mountPath: /sys/class/gpio/gpio433/value
+          mountPath: /sys/class/gpio/gpio444/value
           
       nodeName: edge-a200
       volumes:
@@ -47,11 +47,11 @@ spec:
           path: /sys/class/gpio/gpio504/direction
       - name: gpio1-direction
         hostPath:
-          path: /sys/class/gpio/gpio433/direction
+          path: /sys/class/gpio/gpio444/direction
       - name: gpio0-value
         hostPath:
           path: /sys/class/gpio/gpio504/value
       - name: gpio1-value
         hostPath:
-          path: /sys/class/gpio/gpio433/value
+          path: /sys/class/gpio/gpio444/value
       restartPolicy: Always

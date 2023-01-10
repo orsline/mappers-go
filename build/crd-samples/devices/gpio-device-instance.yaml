@@ -18,29 +18,30 @@ spec:
             values:
               - edge-a200 #pls give your edge node name
   propertyVisitors:
-    - propertyName: yellow-power-status
+    - propertyName: red-power-status
       customizedProtocol:
         protocolName: GPIO
         configData:
-          pin: 0 #pls give your yellow light's Pin
+          pin: 0 #pls give your red light's Pin
     - propertyName: green-power-status
       customizedProtocol:
         protocolName: GPIO
         configData:
           pin: 1 #pls give your green light's Pin
-    - propertyName: red-power-status
+    - propertyName: yellow-power-status
       customizedProtocol:
         protocolName: GPIO
         configData:
-          pin: 2 #pls give your red light's Pin
+          pin: 2 #pls give your yellow light's Pin
+    
 status:
   twins:
-    - propertyName: yellow-power-status
+    - propertyName: red-power-status
       reported:
         metadata:
           timestamp: '1550049403598'
           type: string
-        value: "ON"
+        value: "OFF"
       desired:
         metadata:
           timestamp: '1550049403598'
@@ -56,8 +57,8 @@ status:
         metadata:
           timestamp: '1550049403598'
           type: string
-        value: "OFF"
-    - propertyName: red-power-status
+        value: "ON"
+    - propertyName: yellow-power-status
       reported:
         metadata:
           timestamp: '1550049403598'
@@ -68,3 +69,4 @@ status:
           timestamp: '1550049403598'
           type: string
         value: "OFF"
+    
