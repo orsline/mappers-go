@@ -440,8 +440,7 @@ func AscendGpioGetValue(pin Pin, val *uint8) error {
 	}
 	readFile, err := os.ReadFile(fileName)
 	*val = readFile[0]
-	if(err != nill)
-	{
+	if(err != nil)	{
 		klog.Errorf("AscendGpioGetValue pin %v err = %v.", pin, err)
 	}
 	klog.Info("AscendGpioGetValue pin %v val = %v.", pin, *val)
