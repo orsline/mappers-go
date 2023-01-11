@@ -303,6 +303,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		req, _ := http.NewRequest(http.MethodPost, gigEClient.deviceMeta[DeviceSN].imageURL, body)
 		if req == nil {
 			klog.Errorf("Failed to post %s's images: URL can't POST.", DeviceSN)
+			C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
 			return
 		}
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
@@ -310,6 +311,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		resp, _ := client.Do(req)
 		if resp == nil {
 			klog.Errorf("Failed to post %s's images: URL no reaction.", DeviceSN)
+			C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
 			return
 		}
 		defer func(Body io.ReadCloser) {
@@ -322,6 +324,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		fmt.Println("response Status:", resp.Status)
 		fmt.Println("response Headers:", resp.Header)
 		fmt.Println("response Body:", string(data))
+		C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
 	}()
 }
 
