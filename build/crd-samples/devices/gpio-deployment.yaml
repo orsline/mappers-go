@@ -13,8 +13,6 @@ spec:
         app: gpio-line1
     spec:
       hostNetwork: true
-      nodeSelector:
-        role: edgeNode
       containers:
       - name: gpio-container
         image: gpio-mapper-arm64:v1.0
@@ -36,7 +34,6 @@ spec:
           mountPath: /sys/class/gpio/gpio504/value
         - name: gpio1-value
           mountPath: /sys/class/gpio/gpio444/value
-          
       nodeName: edge-a200
       volumes:
       - name: config-volume

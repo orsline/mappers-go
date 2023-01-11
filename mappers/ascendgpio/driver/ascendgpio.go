@@ -417,10 +417,8 @@ func AscendGpioSetValue(pin Pin, val uint8) error {
 		return err
 	}
 
+	klog.V(3).Infof("AscendGpioSetValue pin %v val = %v fileName = %v", pin, val, fileName)
 	buff := []byte{val + '0'}
-
-	fmt.Println("buff =", buff)
-	fmt.Println("fileName =", fileName)
 	err = os.WriteFile(fileName, buff, 0644)
 	if err != nil {
 		klog.Errorf("os.WriteFile fileName= %v err = %v ", fileName, err)

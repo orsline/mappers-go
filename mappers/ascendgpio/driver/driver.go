@@ -90,7 +90,7 @@ func (d *GPIO) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data in
 	//}
 	// Unmap gpio memory when done
 	//defer ascendgpio.Close()
-	if pinClient.Read() == 0 {
+	if pinClient.Read() == '0' {
 		return "OFF", nil
 	}
 	return "ON", nil
