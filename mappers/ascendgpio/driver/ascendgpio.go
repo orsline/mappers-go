@@ -441,7 +441,7 @@ func AscendGpioGetValue(pin Pin, val *uint8) error {
 	if(err != nil)	{
 		klog.Errorf("AscendGpioGetValue pin %v err = %v.", pin, err)
 	}
-	klog.V(4).Infof("AscendGpioGetValue pin %v val = %v.", pin, *val)
+	klog.V(5).Infof("AscendGpioGetValue pin %v val = %v.", pin, *val)
 	return err
 }
 func isAscendPin(pin Pin) bool {
