@@ -49,6 +49,7 @@ type DeviceMeta struct {
 	deviceStatus  bool
 	imageFormat   string
 	imageURL      string
+	ImageTrigger  string
 	maxRetryTimes int
 }
 
@@ -165,4 +166,3 @@ func (gigEClient *GigEVisionDevice) ReconnectDevice(DeviceSN string) {
 	}
 	fmt.Printf("Device %s restart success!\n", DeviceSN)
 }
-

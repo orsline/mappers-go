@@ -19,16 +19,22 @@ spec:
               - edge-a200 #pls give your edge node name
   propertyVisitors:
     - propertyName: red-power-status
+      collectCycle: 10000000000     #Mapper 从设备收集数据的频率
+      reportCycle: 1000000000     #Mapper 报告数据的频率
       customizedProtocol:
         protocolName: GPIO
         configData:
           pin: 0 #pls give your red light's Pin
     - propertyName: green-power-status
+      collectCycle: 10000000000     #Mapper 从设备收集数据的频率
+      reportCycle: 1000000000     #Mapper 报告数据的频率
       customizedProtocol:
         protocolName: GPIO
         configData:
           pin: 1 #pls give your green light's Pin
     - propertyName: yellow-power-status
+      collectCycle: 10000000000     #Mapper 从设备收集数据的频率
+      reportCycle: 1000000000     #Mapper 报告数据的频率
       customizedProtocol:
         protocolName: GPIO
         configData:
