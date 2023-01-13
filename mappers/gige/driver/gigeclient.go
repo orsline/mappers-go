@@ -125,7 +125,6 @@ import "C"
 import (
 	"encoding/base64"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"k8s.io/klog/v2"
 	"net/http"
@@ -328,10 +327,11 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
 		bufferHdr.Len = size
 		bufferHdr.Cap = size
-		postStr := base64.URLEncoding.EncodeToString(buffer)
-		v := url.Values{}
-		v.Set("gigEImage", postStr)
-		body := ioutil.NopCloser(strings.NewReader(v.Encode()))
+		postStr := base64.StdEncoding.EncodeToString(buffer)
+		bufferSize := len(buffer)
+		//v := url.Values{}
+		//v.Set("gigEImage", postStr)
+		body := strings.NewReader(`{"size":` + strconv.Itoa(bufferSize) + `,"value":"` + postStr + `"}`)
 		req, _ := http.NewRequest(http.MethodPost, gigEClient.deviceMeta[DeviceSN].imageURL, body)
 		if req == nil {
 			klog.Errorf("Failed to post %s's images: URL can't POST.", DeviceSN)
