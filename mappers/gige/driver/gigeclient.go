@@ -345,17 +345,17 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 			klog.Errorf("Failed to post %s's images: URL no reaction.", DeviceSN)
 			return
 		}
-		defer func(Body io.ReadCloser) {
-			err := Body.Close()
-			if err != nil {
-
-			}
-		}(resp.Body)
-		data, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println("response Status:", resp.Status)
-		fmt.Println("response Headers:", resp.Header)
-		fmt.Println("response Body:", string(data))
-	}()
+		//defer func(Body io.ReadCloser) {
+		//	err := Body.Close()
+		//	if err != nil {
+		//
+		//	}
+	}(resp.Body)
+	data, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	fmt.Println("response Body:", string(data))
+}()
 }
 
 func (gigEClient *GigEVisionDevice) convert(value interface{}) (convertValue string, err error) {
