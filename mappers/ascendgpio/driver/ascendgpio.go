@@ -431,14 +431,14 @@ func AscendGpioGetValue(pin Pin, val *uint8) error {
 	if pin == 0 {
 		fileName = ascend_gpio_0_val
 	} else if pin == 1 {
-		fileName = ascend_gpio_0_val
+		fileName = ascend_gpio_1_val
 	} else {
 		err := fmt.Errorf("pin number is incorrect,the correct num is must be 0,1")
 		return err
 	}
 	readFile, err := os.ReadFile(fileName)
 	*val = readFile[0]
-	if(err != nil)	{
+	if err != nil {
 		klog.Errorf("AscendGpioGetValue pin %v err = %v.", pin, err)
 	}
 	klog.V(5).Infof("AscendGpioGetValue pin %v val = %v.", pin, *val)
