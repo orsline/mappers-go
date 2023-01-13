@@ -125,6 +125,7 @@ import "C"
 import (
 	"encoding/base64"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"k8s.io/klog/v2"
 	"net/http"
