@@ -209,7 +209,7 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err er
 		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "" {
 			results = gigEClient.deviceMeta[DeviceSN].ImageTrigger
 		} else {
-			err = fmt.Errorf("maybe init %s's image format failed, it only support format png or pnm", DeviceSN)
+			err = fmt.Errorf("maybe init %s's ImageTrigger failed, current value is  null", DeviceSN)
 			return "", err
 		}
 		//
