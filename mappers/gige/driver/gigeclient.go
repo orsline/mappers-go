@@ -144,14 +144,15 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	switch gigEClient.deviceMeta[DeviceSN].FeatureName {
 	case "ImageTrigger":
 		switch convertValue {
-		case "sigleShot":
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "sigleShot"
+		case "singleShot":
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "singleShot"
 		case "continuous":
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous"
 		case "stop":
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
 		default:
-			err = fmt.Errorf("set %s's ImageTrigger failed, it only support  sigleShot, continuous or stop", DeviceSN)
+			err = fmt.Errorf("set %s's ImageTrigger to %s failed, it only support  singleShot, continuous or stop",
+				DeviceSN, convertValue)
 			return err
 		}
 
@@ -175,7 +176,8 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 		case "jpeg":
 			gigEClient.deviceMeta[DeviceSN].imageFormat = "jpeg"
 		default:
-			err = fmt.Errorf("set %s's image format failed, it only support format jpeg, png or pnm", DeviceSN)
+			err = fmt.Errorf("set %s's imageformat to %s failed, it only support format jpeg, png or pnm",
+				DeviceSN, convertValue)
 			return err
 		}
 	case "ImageURL":
@@ -209,7 +211,7 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err er
 		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "" {
 			results = gigEClient.deviceMeta[DeviceSN].ImageTrigger
 		} else {
-			err = fmt.Errorf("maybe init %s's image format failed, it only support format png or pnm", DeviceSN)
+			err = fmt.Errorf("maybe init %s's ImageTrigger failed, current value is  null", DeviceSN)
 			return "", err
 		}
 		//
