@@ -127,12 +127,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"k8s.io/klog/v2"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
+	"unsafe"
 )
 
 func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err error) {
