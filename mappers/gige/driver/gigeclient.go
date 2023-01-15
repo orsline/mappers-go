@@ -144,14 +144,14 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	switch gigEClient.deviceMeta[DeviceSN].FeatureName {
 	case "ImageTrigger":
 		switch convertValue {
-		case "singleShot":
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "singleShot"
+		case "single":
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "single"
 		case "continuous":
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous"
 		case "stop":
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
 		default:
-			err = fmt.Errorf("set %s's ImageTrigger to %s failed, it only support  singleShot, continuous or stop",
+			err = fmt.Errorf("set %s's ImageTrigger to %s failed, it only support  single, continuous or stop",
 				DeviceSN, convertValue)
 			return err
 		}
