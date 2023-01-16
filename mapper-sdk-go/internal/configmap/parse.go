@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"k8s.io/klog/v2"
+
 	"github.com/kubeedge/mappers-go/mapper-sdk-go/internal/common"
 )
 
@@ -42,9 +44,9 @@ func Parse(path string,
 				}
 				// If the protocol does not match, the device,model,protocol will not be added
 				if strings.ToUpper(protocolConfig["protocolName"].(string)) != strings.ToUpper(serviceProtocolName) {
-					klog.Errorf("Failed to add %s , because protocolName should be %s", instance.ID, protocolConfig["protocolName"])
+					klog.Errorf("Failed to add %s , because protocolName should be %s",instance.ID,protocolConfig["protocolName"])
 					protocolAssert = false
-				} else {
+				}else{
 					protocols[deviceProfile.Protocols[protoIndex].Name] = new(Protocol)
 					protocols[deviceProfile.Protocols[protoIndex].Name] = &deviceProfile.Protocols[protoIndex]
 					instance.PProtocol = deviceProfile.Protocols[protoIndex]
@@ -61,7 +63,7 @@ func Parse(path string,
 			return err
 		}
 		// loop propertyIndex : find the device model's properties for each device instance's propertyVisitor
-		for propertyIndex := 0; q1 < len(instance.PropertyVisitors); propertyIndex++ {
+		for propertyIndex := 0; propertyIndex < len(instance.PropertyVisitors); propertyIndex++ {
 			modelName := instance.PropertyVisitors[propertyIndex].ModelName
 			propertyName := instance.PropertyVisitors[propertyIndex].PropertyName
 			modelIndex := 0
