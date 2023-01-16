@@ -125,9 +125,9 @@ import "C"
 import (
 	"encoding/base64"
 	"fmt"
-	"k8s.io/klog/v2"
 	"io"
 	"io/ioutil"
+	"k8s.io/klog/v2"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -291,7 +291,6 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 	var p = &imageBuffer
 	var msg *C.char
 	defer C.free(unsafe.Pointer(msg))
-	defer C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
 	signal := C.get_image(gigEClient.deviceMeta[DeviceSN].dev, C.CString(gigEClient.deviceMeta[DeviceSN].imageFormat), (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
 	if signal != 0 {
 		klog.Errorf("Failed to get %s's images: %s.", DeviceSN, (string)(C.GoString(msg)))
@@ -304,6 +303,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 	go func() {
 		var buffer []byte
 		var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
+		defer C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
 		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
 		bufferHdr.Len = size
 		bufferHdr.Cap = size
