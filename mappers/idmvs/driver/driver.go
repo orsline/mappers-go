@@ -43,10 +43,10 @@ type IDMVS struct {
 }
 
 type IDMVSInstance struct {
-	server       net.Listener
-	codeValue    string
-	status       bool
-	reportstatus bool
+	server      net.Listener
+	codeValue   string
+	status      bool
+	reportTimes int
 }
 
 // InitDevice Sth that need to do in the first
@@ -97,11 +97,11 @@ func (d *IDMVS) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data i
 	if err != nil {
 		return nil, err
 	}
-	if d.listeners[port].reportstatus == false {
+	if d.listeners[port].reportTimes == 0 {
 		return "NoRead", nil
 	}
 
-	d.listeners[port].reportstatus = false
+	d.listeners[port].reportTimes--
 	return d.listeners[port].codeValue, nil
 }
 
@@ -158,7 +158,7 @@ func (d *IDMVS) connect() {
 				barCode = strings.TrimRight(strings.TrimLeft(barCode, "<p>"), "</p>")
 				d.listeners[d.protocolCommonConfig.Port].codeValue = barCode
 				d.listeners[d.protocolCommonConfig.Port].status = true
-				d.listeners[d.protocolCommonConfig.Port].reportstatus = true
+				d.listeners[d.protocolCommonConfig.Port].reportTimes = 2 //one for devicetwin,and another for third-part application
 			}
 		}
 	}()
