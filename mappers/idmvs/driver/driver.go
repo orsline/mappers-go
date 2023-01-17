@@ -98,7 +98,7 @@ func (d *IDMVS) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data i
 		return nil, err
 	}
 	if d.listeners[port].reportstatus == false {
-		return ""
+		return "NoRead", nil
 	}
 
 	d.listeners[port].reportstatus = false
