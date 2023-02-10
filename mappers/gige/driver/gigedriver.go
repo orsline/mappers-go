@@ -65,6 +65,9 @@ func (gigEClient *GigEVisionDevice) InitDevice(protocolCommon []byte) (err error
 		klog.Errorf("Failed to new a GigE client: %v.", err)
 		return err
 	}
+
+	gigEClient.InitMqttClient()
+
 	return nil
 }
 

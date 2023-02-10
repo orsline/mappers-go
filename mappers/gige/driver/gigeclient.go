@@ -159,6 +159,7 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "stop" {
 			if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
 				gigEClient.PostImage(DeviceSN)
+
 			} else {
 				klog.V(4).Infof("Device %v's imageURL is null, so do not post the image", DeviceSN)
 			}
