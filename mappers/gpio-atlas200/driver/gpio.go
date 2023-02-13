@@ -34,7 +34,6 @@ import (
 	"io/fs"
 	"k8s.io/klog/v2"
 	"os"
-	"syscall"
 	"unsafe"
 )
 
@@ -225,10 +224,10 @@ func isPca6416Pin(pin Pin) bool {
 
 // IOCTL send ioctl
 func IOCTL(fd *os.File, name, data uintptr) error {
-	_, _, err := syscall.Syscall(syscall.SYS_IOCTL, fd, name, data)
-	if err != 0 {
-		return syscall.Errno(err)
-	}
+	//_, _, err := syscall.Syscall(syscall.SYS_IOCTL, fd, name, data)
+	//if err != 0 {
+	//	return syscall.Errno(err)
+	//}
 	return nil
 }
 
