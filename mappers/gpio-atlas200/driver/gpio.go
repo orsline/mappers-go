@@ -38,7 +38,6 @@ import (
 	"k8s.io/klog/v2"
 	"os"
 	"syscall"
-	"time"
 	"unsafe"
 )
 
