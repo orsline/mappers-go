@@ -16,7 +16,7 @@ spec:
           - key: ''
             operator: In
             values:
-              - edge-a200 #pls give your edge node name
+              - edge-a200-00 #pls give your edge node name
   propertyVisitors:
     - propertyName: red-power-status
       collectCycle: 10000000000     #Mapper 从设备收集数据的频率
@@ -38,7 +38,7 @@ spec:
       customizedProtocol:
         protocolName: GPIO
         configData:
-          pin: 2 #pls give your yellow light's Pin
+          pin: 3 #pls give your yellow light's Pin, pin 2 is not vaild for atlas200dk
     
 status:
   twins:

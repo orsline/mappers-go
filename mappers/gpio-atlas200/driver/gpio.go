@@ -1,5 +1,5 @@
 /*
-            Atlas 200DK PIN define
+            Atlas 200DK A1 PIN define
   +------+---------+-------++------+---------+-------+
   |  pin |   Name  |voltage||  pin |   Name  |voltage|
   +-----+-----------+------++----+---------+-----+
@@ -24,7 +24,6 @@
   |  37  | GPIO-7  |  3.3V ||  38  | TXD-3559|  3.3V |
   |  39  | GND     |  3.3V ||  40  | RXD-3559|  3.3V |
   +------+---------+-------++------+---------+-------+
-
 gpio 0~1 are directly derived from the Ascend AI processor,
 gpio 2 is not  available for user
 gpio 3~7 are derived from PCA6416,controlled by i2c
@@ -202,7 +201,7 @@ func isPca6416Pin(pin Pin) bool {
 
 // IOCTL send ioctl
 func IOCTL(f *os.File, flag, data uintptr) error {
-	_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(f.Fd()), 0x0707, uintptr(data))
+	_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(f.Fd()), flag, uintptr(data))
 	if err != 0 {
 		return syscall.Errno(err)
 	}
@@ -225,13 +224,12 @@ func i2c_read(slave uint8, reg uint8, data *uint8) error {
 			buf:   uintptr(unsafe.Pointer(data)),
 		},
 	}
-
 	ssm_msg := i2c_ctrl{
 		msgs:    uintptr(unsafe.Pointer(&msg[0])),
 		msg_num: uint32(len(msg)),
 	}
 
-	perm := fs.FileMode(0644) //--w----r--
+	perm := fs.FileMode(0644) //-rw-r--r--
 	flag := int(os.O_RDWR | os.O_CREATE | os.O_TRUNC)
 	f, err := os.OpenFile(i2c_device_name, flag, perm)
 	defer f.Close()
@@ -259,7 +257,7 @@ func i2c_write(slave uint8, reg uint8, data uint8) error {
 		msg_num: uint32(1),
 	}
 
-	perm := fs.FileMode(666)
+	perm := fs.FileMode(666) // -rw-rw-rw-
 	flag := int(os.O_RDWR | os.O_CREATE | os.O_TRUNC)
 	f, err := os.OpenFile(i2c_device_name, flag, perm)
 	defer f.Close()
@@ -352,9 +350,9 @@ func pca6416GpioGetValue(pin Pin, val *uint8) error {
 	}
 	data &= gpio_mask[pin]
 	if data > 0 {
-		*val = 1
+		*val = '1'
 	} else {
-		*val = 0
+		*val = '0'
 	}
 	return nil
 }
@@ -376,7 +374,7 @@ func AscendGpioSetDirection(pin Pin, dir uint8) error {
 	if dir == 0 {
 		direction = "in"
 	}
-	err = os.WriteFile(fileName, []byte(direction), 0777)
+	err = os.WriteFile(fileName, []byte(direction), 0644)
 	if err != nil {
 		klog.Errorf("os.WriteFile fileName= %v err = %v ", fileName, err)
 		return err
@@ -432,78 +430,85 @@ func isAscendPin(pin Pin) bool {
 
 // set gpio direction ,0-- in ,1--out
 func gpioSetDirection(pin Pin, direction uint8) error {
-	klog.V(3).Infof("gpioSetDirection pin %v val = %v", pin, direction)
+	var result error
 	if true == isAscendPin(pin) {
-		return AscendGpioSetDirection(pin, direction)
+		result = AscendGpioSetDirection(pin, direction)
 	} else {
-		return pca6416GpioSetDirection(pin, direction)
+		result = pca6416GpioSetDirection(pin, direction)
 	}
+
+	if nil != result {
+		klog.V(3).Infof("gpioSetDirection fail, pin= %v direction= %v result = %v", pin, direction, result)
+	} else {
+		klog.V(5).Infof("gpioSetDirection ok, pin= %v direction = %v", pin, direction)
+	}
+	return result
 }
 
 func gpioSetValue(pin Pin, val uint8) error {
-	klog.V(3).Infof("gpioSetValue pin %v val = %v", pin, val)
+	var result error
+
 	if true == isAscendPin(pin) {
-		return AscendGpioSetValue(pin, val)
+		result = AscendGpioSetValue(pin, val)
 	} else {
-		return pca6416GpioSetValue(pin, val)
+		result = pca6416GpioSetValue(pin, val)
 	}
+	if nil != result {
+		klog.V(3).Infof("gpioSetValue fail, pin= %v val= %v result = %v", pin, val, result)
+	} else {
+		klog.V(5).Infof("gpioSetValue ok, pin= %v val = %v", pin, val)
+	}
+	return result
 }
 func gpioGetValue(pin Pin, val *uint8) error {
+	var result error
+
 	if true == isAscendPin(pin) {
-		return AscendGpioGetValue(pin, val)
+		result = AscendGpioGetValue(pin, val)
 	} else {
-		return pca6416GpioGetValue(pin, val)
+		result = pca6416GpioGetValue(pin, val)
 	}
+
+	if nil != result {
+		klog.V(3).Infof("gpioGetValue fail, pin= %v result = %v", pin, result)
+	} else {
+		klog.V(5).Infof("gpioGetValue ok, pin= %v val = %v", pin, *val)
+	}
+	return result
 }
 
+/*
 func Gpio_test() {
 	var value uint8 = 0
 	var pin Pin
 	var result error
 
 	for pin = 1; pin <= 8; pin++ {
-		// value = 0
-		// result = gpioSetValue(pin, value)
-		// fmt.Printf("\n gpioSetValue pin %v val = %v,result = %v", pin, value, result)
-		// time.Sleep(10 * (time.Millisecond))
-		// result = gpioGetValue(pin, &value)
-		// fmt.Printf("\n gpioGetValue pin %v val = %v, result = %v", pin, value, result)
-		// time.Sleep(10 * (time.Millisecond))
+
 		fmt.Printf("\r\n\r\n gpioSetDirection pin %v Direction = %v ", pin, 1)
 		result = gpioSetDirection(pin, 1)
-		result = result
-		//fmt.Printf("\r\n result result =  %v ", result)
-
-		//fmt.Printf("\r\n\r\n gpioSetDirection pin %v Direction = %v ", 4, 1)
-		//result = gpioSetDirection(4, 1)
-		////fmt.Printf("\r\n result result =  %v ", result)
-		//
-		//fmt.Printf("\r\n\r\n gpioSetDirection pin %v Direction = %v ", 5, 1)
-		//result = gpioSetDirection(5, 1)
-		////fmt.Printf("\r\n result result =  %v ", result)
 
 		value = 0
 		fmt.Printf("\r\n\r\n gpioSetValue pin %v val = %v", pin, value)
 		result = gpioSetValue(pin, value)
-		//fmt.Printf("\r\n result result =  %v ", result)
 		time.Sleep(10 * (time.Millisecond))
 
 		result = gpioGetValue(pin, &value)
 		fmt.Printf("\r\n \r\n gpioGetValue pin %v val = %v", pin, value)
-		fmt.Printf("\r\n result result =  %v ", result)
+		fmt.Printf("\r\n result =  %v ", result)
 		time.Sleep(10 * (time.Millisecond))
 
 		value = 1
 		fmt.Printf("\r\n\r\n gpioSetValue pin %v val = %v", pin, value)
 		result = gpioSetValue(pin, value)
-		//fmt.Printf("\r\n result result =  %v ", result)
 		time.Sleep(10 * (time.Millisecond))
 
 		result = gpioGetValue(pin, &value)
 		fmt.Printf("\r\n \r\n gpioGetValue pin %v val = %v", pin, value)
-		fmt.Printf("\r\n result result =  %v ", result)
+		fmt.Printf("\r\n result =  %v ", result)
 		time.Sleep(10 * (time.Millisecond))
 
 		fmt.Printf("\r\n ")
 	}
 }
+*/

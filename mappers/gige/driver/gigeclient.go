@@ -145,9 +145,9 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	case "ImageTrigger":
 		switch convertValue {
 		case "single":
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "single"
+			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "single"  // move to the funcion postImage
 		case "continuous":
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous"
+			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous" // move to the funcion postImage
 		case "stop":
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
 		default:
@@ -156,9 +156,9 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 			return err
 		}
 
-		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "stop" {
+		if convertValue != "stop" {
 			if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
-				gigEClient.PostImage(DeviceSN)
+				gigEClient.PostImage(DeviceSN, convertValue)
 
 			} else {
 				klog.V(4).Infof("Device %v's imageURL is null, so do not post the image", DeviceSN)
@@ -264,12 +264,14 @@ func (gigEClient *GigEVisionDevice) NewClient(DeviceSN string) (err error) {
 		if signal != 0 {
 			klog.Errorf("Failed to open device %s: %s.", DeviceSN, (string)(C.GoString(msg)))
 			gigEClient.deviceMeta[DeviceSN] = &DeviceMeta{
-				dev:           nil,
-				deviceStatus:  false,
-				imageFormat:   "jpeg",
-				imageURL:      "",
-				FeatureName:   "",
-				maxRetryTimes: 100,
+				dev:              nil,
+				deviceStatus:     false,
+				imageFormat:      "jpeg",
+				imageURL:         "",
+				ImageTrigger:     "stop",
+				ImagePostingFlag: false,
+				FeatureName:      "",
+				maxRetryTimes:    100,
 			}
 			go gigEClient.ReconnectDevice(DeviceSN)
 			return nil
@@ -286,12 +288,19 @@ func (gigEClient *GigEVisionDevice) NewClient(DeviceSN string) (err error) {
 	return nil
 }
 
-func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
+func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue string) {
 	var imageBuffer *byte
 	var size int
 	var p = &imageBuffer
 	var msg *C.char
 	defer C.free(unsafe.Pointer(msg))
+
+	if gigEClient.deviceMeta[DeviceSN].ImagePostingFlag == true {
+		klog.Errorf("image post is processing", DeviceSN)
+		return
+	}
+
+	gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = true
 	signal := C.get_image(gigEClient.deviceMeta[DeviceSN].dev, C.CString(gigEClient.deviceMeta[DeviceSN].imageFormat), (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
 	if signal != 0 {
 		klog.Errorf("Failed to get %s's images: %s.", DeviceSN, (string)(C.GoString(msg)))
@@ -301,6 +310,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		}
 		return
 	}
+
 	go func() {
 		var buffer []byte
 		var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
@@ -310,8 +320,6 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 		bufferHdr.Cap = size
 		postStr := base64.StdEncoding.EncodeToString(buffer)
 		bufferSize := len(buffer)
-		//v := url.Values{}
-		//v.Set("gigEImage", postStr)
 		body := strings.NewReader(`{"size":` + strconv.Itoa(bufferSize) + `,"value":"` + postStr + `"}`)
 		req, _ := http.NewRequest(http.MethodPost, gigEClient.deviceMeta[DeviceSN].imageURL, body)
 		if req == nil {
@@ -325,6 +333,9 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string) {
 			klog.Errorf("Failed to post %s's images: URL no reaction.", DeviceSN)
 			return
 		}
+		gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
+		gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
+
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()
 			if err != nil {
