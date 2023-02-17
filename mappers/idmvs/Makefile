@@ -7,7 +7,7 @@ help:
 	#   make docker :  pack binaries to image
 	@echo
 build:
-	go build -o ./bin/main ./cmd/main.go
+	go build -o ./bin/idmvs ./cmd/main.go
 	@echo  "[INFO] go build successful"
 	@echo  "[INFO] you can cd ./bin to execute it"
 clean:
