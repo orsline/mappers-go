@@ -150,6 +150,8 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous" // move to the funcion postImage
 		case "stop":
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
+			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
+
 		default:
 			err = fmt.Errorf("set %s's ImageTrigger to %s failed, it only support  single, continuous, stop",
 				DeviceSN, convertValue)
@@ -210,6 +212,7 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err er
 		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "" {
 			results = gigEClient.deviceMeta[DeviceSN].ImageTrigger
 		} else {
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
 			err = fmt.Errorf("maybe init %s's ImageTrigger failed, current value is  null", DeviceSN)
 			return "", err
 		}
@@ -296,7 +299,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 	defer C.free(unsafe.Pointer(msg))
 
 	if gigEClient.deviceMeta[DeviceSN].ImagePostingFlag == true {
-		klog.Errorf("image post is processing", DeviceSN)
+		klog.Errorf("image post is processing,do nothing,deviceSN %v", DeviceSN)
 		return
 	}
 
@@ -315,6 +318,9 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 		var buffer []byte
 		var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
 		defer C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
+		defer func(){
+			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
+		}()
 		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
 		bufferHdr.Len = size
 		bufferHdr.Cap = size
@@ -334,7 +340,6 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 			return
 		}
 		gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
-		gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
 
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()

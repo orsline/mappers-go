@@ -43,7 +43,6 @@ func SyncInfo(dic *di.Container, message mqtt.Message) {
 		if i == len(deviceInstances[instanceID].Twins) {
 			continue
 		}
-		
 		if len(twinValue) > 30{
 			klog.V(4).Infof("Set %s:%s value to %s......", instanceID, twinName, twinValue[:30])
 		}else{
