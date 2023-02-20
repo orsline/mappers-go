@@ -303,7 +303,6 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 		return
 	}
 
-	gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = true
 	signal := C.get_image(gigEClient.deviceMeta[DeviceSN].dev, C.CString(gigEClient.deviceMeta[DeviceSN].imageFormat), (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
 	if signal != 0 {
 		klog.Errorf("Failed to get %s's images: %s.", DeviceSN, (string)(C.GoString(msg)))
@@ -313,6 +312,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 		}
 		return
 	}
+	gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = true
 
 	go func() {
 		var buffer []byte
@@ -339,7 +339,6 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 			klog.Errorf("Failed to post %s's images: URL no reaction.", DeviceSN)
 			return
 		}
-		gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
 
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()
@@ -347,7 +346,11 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 
 			}
 		}(resp.Body)
+
 		data, _ := ioutil.ReadAll(resp.Body)
+		if resp.StatusCode == 200 {
+		    gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
+		}
 		fmt.Println("response Status:", resp.Status)
 		fmt.Println("response Headers:", resp.Header)
 		fmt.Println("response Body:", string(data))
