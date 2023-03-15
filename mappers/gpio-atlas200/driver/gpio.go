@@ -72,17 +72,16 @@ const (
 	i2cRetres      = 0x0701
 	i2cTimeOut     = 0x0702
 	i2cSlave       = 0x0703
-	i2cRdwr        = 0x0707
+	i2cRDWR        = 0x0707
 	i2cmRD        = 0x01
 
-	pca6416SlaveAddr        = 0x20
+	pca6416SlaveAddr       = 0x20
 	pca6416GpioCfgReg      = 0x07
 	pca6416GpioPorarityReg = 0x05
 	pca6416GpioOutReg      = 0x03
 	pca6416GpioInReg       = 0x01
 
 	//GPIO MASK
-
 	gpio3Mask = 0x10
 	gpio4Mask = 0x20
 	gpio5Mask = 0x40
@@ -245,7 +244,7 @@ func i2cRead(slave uint8, reg uint8, data *uint8) error {
 		return err
 	}
 
-	err = IOCTL(f, i2cRdwr, uintptr(unsafe.Pointer(&ssmMsg)))
+	err = IOCTL(f, i2cRDWR, uintptr(unsafe.Pointer(&ssmMsg)))
 	return err
 }
 
@@ -272,7 +271,7 @@ func i2cWrite(slave uint8, reg uint8, data uint8) error {
 	if err != nil {
 		return err
 	}
-	err = IOCTL(f, i2cRdwr, uintptr(unsafe.Pointer(&ssmMsg)))
+	err = IOCTL(f, i2cRDWR, uintptr(unsafe.Pointer(&ssmMsg)))
 	return err
 }
 
