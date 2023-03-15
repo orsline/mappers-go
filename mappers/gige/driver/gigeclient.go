@@ -136,6 +136,11 @@ import (
 	"unsafe"
 )
 
+const (
+	imageTrigger_single = "single"
+	imageTrigger_continue = "continuous"
+	imageTrigger_stop = "stop"
+)
 func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err error) {
 	convertValue, err := gigEClient.convert(value)
 	if err != nil {
@@ -144,12 +149,12 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	switch gigEClient.deviceMeta[DeviceSN].FeatureName {
 	case "ImageTrigger":
 		switch convertValue {
-		case "single":
+		case imageTrigger_single:
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "single"  // move to the funcion postImage
-		case "continuous":
+		case imageTrigger_continue:
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous" // move to the funcion postImage
-		case "stop":
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
+		case imageTrigger_stop:
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTrigger_stop
 			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
 
 		default:
@@ -158,7 +163,7 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 			return err
 		}
 
-		if convertValue != "stop" {
+		if convertValue != imageTrigger_stop {
 			if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
 				gigEClient.PostImage(DeviceSN, convertValue)
 
@@ -212,7 +217,7 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err er
 		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "" {
 			results = gigEClient.deviceMeta[DeviceSN].ImageTrigger
 		} else {
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = "stop"
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTrigger_stop
 			err = fmt.Errorf("maybe init %s's ImageTrigger failed, current value is  null", DeviceSN)
 			return "", err
 		}
@@ -298,7 +303,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 	var msg *C.char
 	defer C.free(unsafe.Pointer(msg))
 
-	if gigEClient.deviceMeta[DeviceSN].ImagePostingFlag == true {
+	if gigEClient.deviceMeta[DeviceSN].ImagePostingFlag {
 		klog.Errorf("image post is processing,do nothing,deviceSN %v", DeviceSN)
 		return
 	}
