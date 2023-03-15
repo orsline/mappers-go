@@ -137,10 +137,12 @@ import (
 )
 
 const (
-	imageTrigger_single = "single"
-	imageTrigger_continue = "continuous"
-	imageTrigger_stop = "stop"
+	imageTriggerSingle = "single"
+	imageTriggerContinue = "continuous"
+	imageTriggerStop = "stop"
 )
+
+// Set is used to set device properitys
 func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err error) {
 	convertValue, err := gigEClient.convert(value)
 	if err != nil {
@@ -149,12 +151,12 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	switch gigEClient.deviceMeta[DeviceSN].FeatureName {
 	case "ImageTrigger":
 		switch convertValue {
-		case imageTrigger_single:
+		case imageTriggerSingle:
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "single"  // move to the funcion postImage
-		case imageTrigger_continue:
+		case imageTriggerContinue:
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous" // move to the funcion postImage
-		case imageTrigger_stop:
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTrigger_stop
+		case imageTriggerStop:
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTriggerStop
 			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
 
 		default:
@@ -163,7 +165,7 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 			return err
 		}
 
-		if convertValue != imageTrigger_stop {
+		if convertValue != imageTriggerStop {
 			if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
 				gigEClient.PostImage(DeviceSN, convertValue)
 
@@ -210,14 +212,14 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	}
 	return nil
 }
-
+// Get is used to get device properitys*/
 func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err error) {
 	switch gigEClient.deviceMeta[DeviceSN].FeatureName {
 	case "ImageTrigger":
 		if gigEClient.deviceMeta[DeviceSN].ImageTrigger != "" {
 			results = gigEClient.deviceMeta[DeviceSN].ImageTrigger
 		} else {
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTrigger_stop
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTriggerStop
 			err = fmt.Errorf("maybe init %s's ImageTrigger failed, current value is  null", DeviceSN)
 			return "", err
 		}
@@ -256,6 +258,7 @@ func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err er
 	return results, err
 }
 
+// NewClient connect new device
 func (gigEClient *GigEVisionDevice) NewClient(DeviceSN string) (err error) {
 	var msg *C.char
 	var dev *C.uint
@@ -296,6 +299,7 @@ func (gigEClient *GigEVisionDevice) NewClient(DeviceSN string) (err error) {
 	return nil
 }
 
+// PostImage is used to post images to dest url
 func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue string) {
 	var imageBuffer *byte
 	var size int

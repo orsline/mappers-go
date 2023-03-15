@@ -7,25 +7,30 @@ import (
 	"sync"
 )
 
+// GPIOProtocolConfig is the protocol config structure.
 type GPIOProtocolConfig struct {
 	ProtocolName       string `json:"protocolName"`
 	ProtocolConfigData `json:"configData"`
 }
-
+// ProtocolConfigData is the protocol config data structure.
 type ProtocolConfigData struct {
 }
 
+// GPIOProtocolCommonConfig is the protocol common config structure.
 type GPIOProtocolCommonConfig struct {
 	CommonCustomizedValues `json:"customizedValues"`
 }
 
+// CommonCustomizedValues is the customized values structure.
 type CommonCustomizedValues struct {
 }
+// GPIOVisitorConfig  is the visitor config structure.
 type GPIOVisitorConfig struct {
 	ProtocolName      string `json:"protocolName"`
 	VisitorConfigData `json:"configData"`
 }
 
+// VisitorConfigData  is the visitor config data  structure.
 type VisitorConfigData struct {
 	Pin int `json:"pin"`
 }

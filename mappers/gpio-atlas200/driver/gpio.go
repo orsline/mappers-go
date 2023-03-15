@@ -40,85 +40,91 @@ import (
 	"unsafe"
 )
 
+// Mode type int8
 type Mode uint8
+
+// Pin type int8
 type Pin uint8
+
+// State type int8
 type State uint8
-type i2c_msg struct {
+type i2cMsg struct {
 	addr      uint16
 	flags     uint16
 	len       uint16
-	__padding uint16
+	padding uint16
 	buf       uintptr
 }
 
-type i2c_ctrl struct {
+type i2cCtrl struct {
 	msgs    uintptr
-	msg_num uint32
+	msgNum uint32
 }
 
 const (
-	ascend_gpio_0_dir = "/sys/class/gpio/gpio504/direction"
-	ascend_gpio_1_dir = "/sys/class/gpio/gpio444/direction"
-	ascend_gpio_0_val = "/sys/class/gpio/gpio504/value"
-	ascend_gpio_1_val = "/sys/class/gpio/gpio444/value"
+	ascendGpio0dir = "/sys/class/gpio/gpio504/direction"
+	ascendGpio1dir = "/sys/class/gpio/gpio444/direction"
+	ascendgpio0Val = "/sys/class/gpio/gpio504/value"
+	ascendgpio1Val = "/sys/class/gpio/gpio444/value"
 )
 const (
-	i2c_device_name = "/dev/i2c-1"
-	i2c_retres      = 0x0701
-	i2c_timeout     = 0x0702
-	i2c_slave       = 0x0703
-	i2c_rdwr        = 0x0707
-	i2c_m_rd        = 0x01
+	i2cDeviceName = "/dev/i2c-1"
+	i2cRetres      = 0x0701
+	i2cTimeOut     = 0x0702
+	i2cSlave       = 0x0703
+	i2cRdwr        = 0x0707
+	i2cmRD        = 0x01
 
-	pca6416_slave_addr        = 0x20
-	pca6416_gpio_cfg_reg      = 0x07
-	pca6416_gpio_porarity_reg = 0x05
-	pca6416_gpio_out_reg      = 0x03
-	pca6416_gpio_in_reg       = 0x01
+	pca6416SlaveAddr        = 0x20
+	pca6416GpioCfgReg      = 0x07
+	pca6416GpioPorarityReg = 0x05
+	pca6416GpioOutReg      = 0x03
+	pca6416GpioInReg       = 0x01
 
 	//GPIO MASK
 
-	gpio3_mask = 0x10
-	gpio4_mask = 0x20
-	gpio5_mask = 0x40
-	gpio6_mask = 0x80
-	gpio7_mask = 0x08
+	gpio3Mask = 0x10
+	gpio4Mask = 0x20
+	gpio5Mask = 0x40
+	gpio6Mask = 0x80
+	gpio7Mask = 0x08
 )
 
 // Generic ioctl constants
 const (
-	IOC_NONE  = 0x0
-	IOC_WRITE = 0x1
-	IOC_READ  = 0x2
+	iocNone  = 0x0
+	iocWrite = 0x1
+	iocRead  = 0x2
+	iocNRBits   = 8
+	iocTypeBits = 8
 
-	IOC_NRBITS   = 8
-	IOC_TYPEBITS = 8
+	iocSizeBits = 14
+	iocDirBits  = 2
 
-	IOC_SIZEBITS = 14
-	IOC_DIRBITS  = 2
+	iocNRShift   = 0
+	iocTypeShift = iocNRShift + iocNRBits     //8 + 0
+	iocSizeShift = iocTypeShift + iocTypeBits //8 + 8
+	iocDirShift = iocSizeShift + iocSizeBits //16 + 14
 
-	IOC_NRSHIFT   = 0
-	IOC_TYPESHIFT = IOC_NRSHIFT + IOC_NRBITS     //8 + 0
-	IOC_SIZESHIFT = IOC_TYPESHIFT + IOC_TYPEBITS //8 + 8
-	IOC_DIRSHIFT  = IOC_SIZESHIFT + IOC_SIZEBITS //16 + 14
-
-	IOC_NRMASK   = ((1 << IOC_NRBITS) - 1)
-	IOC_TYPEMASK = ((1 << IOC_TYPEBITS) - 1)
-	IOC_SIZEMASK = ((1 << IOC_SIZEBITS) - 1)
-	IOC_DIRMASK  = ((1 << IOC_DIRBITS) - 1)
+	iocNRMask   = ((1 << iocNRBits) - 1)
+	iocTYPEMask = ((1 << iocTypeBits) - 1)
+	iocSizeMask = ((1 << iocSizeBits) - 1)
+	iocDirMask  = ((1 << iocDirBits) - 1)
 )
 
 // Some useful additional ioctl constanst
 const (
-	IOC_IN        = IOC_WRITE << IOC_DIRSHIFT
-	IOC_OUT       = IOC_READ << IOC_DIRSHIFT
-	IOC_INOUT     = (IOC_WRITE | IOC_READ) << IOC_DIRSHIFT
-	IOCSIZE_MASK  = IOC_SIZEMASK << IOC_SIZESHIFT
-	IOCSIZE_SHIFT = IOC_SIZESHIFT
+	iocIn        = iocWrite << iocDirShift
+	iocOut       = iocRead << iocDirShift
+	iocInOut     = (iocWrite | iocRead) << iocDirShift
+	iocSizeMask2  = iocSizeMask << iocSizeShift
+	IocSizeShift2 = iocSizeShift
 )
 
 const (
+	// Input the pin if for input
 	Input Mode = iota
+	// Output the pin if for output
 	Output
 )
 
@@ -128,22 +134,22 @@ const (
 	High
 )
 
-// setInput: Set pin as InputPin
+// SetInPut  Set pin as inputPin
 func (pin Pin) SetInPut() {
 	setPinMode(pin, Input)
 }
 
-// setOutput: Set pin as Output
+// SetOutPut Set pin as Output
 func (pin Pin) SetOutPut() {
 	setPinMode(pin, Output)
 }
 
-// setHight: Set pin Hight
+// SetHight Set pin Hight
 func (pin Pin) SetHight() {
 	gpioSetValue(pin, High)
 }
 
-// setLow: Set pin as Low
+// SetLow  Set pin as Low
 func (pin Pin) SetLow() {
 	gpioSetValue(pin, Low)
 }
@@ -157,11 +163,11 @@ func (pin Pin) Write(val uint8) {
 func (pin Pin) Read() uint8 {
 	return ReadPin(pin)
 }
-
+// WritePin is to write value to pin
 func WritePin(pin Pin, val uint8) {
 	gpioSetValue(pin, val)
 }
-
+// ReadPin is to read value of pin
 func ReadPin(pin Pin) uint8 {
 	var val uint8
 	err := gpioGetValue(pin, &val)
@@ -171,7 +177,7 @@ func ReadPin(pin Pin) uint8 {
 	return val
 }
 
-// Spi mode should not be set by this directly, use SpiBegin instead.
+// setPinMode Spi mode should not be set by this directly, use SpiBegin instead.
 func setPinMode(pin Pin, mode Mode) {
 	f := uint8(0)
 	const in uint8 = 0  // 000
@@ -185,10 +191,12 @@ func setPinMode(pin Pin, mode Mode) {
 	}
 	gpioSetDirection(pin, f)
 }
-
+// Open  open a pin
 func Open() (err error) {
 	return nil
 }
+
+// Close  close a pin
 func Close() (err error) {
 	return nil
 }
@@ -208,9 +216,9 @@ func IOCTL(f *os.File, flag, data uintptr) error {
 	return nil
 }
 
-func i2c_read(slave uint8, reg uint8, data *uint8) error {
+func i2cRead(slave uint8, reg uint8, data *uint8) error {
 	regs := []uint8{reg, reg}
-	msg := []i2c_msg{
+	msg := []i2cMsg{
 		{
 			addr:  uint16(slave),
 			flags: 0,
@@ -219,31 +227,31 @@ func i2c_read(slave uint8, reg uint8, data *uint8) error {
 		},
 		{
 			addr:  uint16(slave),
-			flags: i2c_m_rd,
+			flags: i2cmRD,
 			len:   uint16(1),
 			buf:   uintptr(unsafe.Pointer(data)),
 		},
 	}
-	ssm_msg := i2c_ctrl{
-		msgs:    uintptr(unsafe.Pointer(&msg[0])),
-		msg_num: uint32(len(msg)),
+	ssmMsg := i2cCtrl{
+		msgs:   uintptr(unsafe.Pointer(&msg[0])),
+		msgNum: uint32(len(msg)),
 	}
 
 	perm := fs.FileMode(0644) //-rw-r--r--
 	flag := int(os.O_RDWR | os.O_CREATE | os.O_TRUNC)
-	f, err := os.OpenFile(i2c_device_name, flag, perm)
+	f, err := os.OpenFile(i2cDeviceName, flag, perm)
 	defer f.Close()
 	if err != nil {
 		return err
 	}
 
-	err = IOCTL(f, i2c_rdwr, uintptr(unsafe.Pointer(&ssm_msg)))
+	err = IOCTL(f, i2cRdwr, uintptr(unsafe.Pointer(&ssmMsg)))
 	return err
 }
 
-func i2c_write(slave uint8, reg uint8, data uint8) error {
+func i2cWrite(slave uint8, reg uint8, data uint8) error {
 	buf := []uint8{reg, data}
-	msg := []i2c_msg{
+	msg := []i2cMsg{
 		{
 			addr:  uint16(slave),
 			flags: 0,
@@ -252,19 +260,19 @@ func i2c_write(slave uint8, reg uint8, data uint8) error {
 		},
 	}
 
-	ssm_msg := i2c_ctrl{
+	ssmMsg := i2cCtrl{
 		msgs:    uintptr(unsafe.Pointer(&msg[0])),
-		msg_num: uint32(1),
+		msgNum: uint32(1),
 	}
 
 	perm := fs.FileMode(666) // -rw-rw-rw-
 	flag := int(os.O_RDWR | os.O_CREATE | os.O_TRUNC)
-	f, err := os.OpenFile(i2c_device_name, flag, perm)
+	f, err := os.OpenFile(i2cDeviceName, flag, perm)
 	defer f.Close()
 	if err != nil {
 		return err
 	}
-	err = IOCTL(f, i2c_rdwr, uintptr(unsafe.Pointer(&ssm_msg)))
+	err = IOCTL(f, i2cRdwr, uintptr(unsafe.Pointer(&ssmMsg)))
 	return err
 }
 
@@ -273,26 +281,26 @@ func pca6416GpioSetDirection(pin Pin, dir uint8) error {
 	var data uint8
 	var reg uint8
 	var slave uint8
-	var gpio_mask = []uint8{0, 0, 0, gpio3_mask, gpio4_mask, gpio5_mask, gpio6_mask, gpio7_mask}
+	var gpioMask = []uint8{0, 0, 0, gpio3Mask, gpio4Mask, gpio5Mask, gpio6Mask, gpio7Mask}
 
 	if false == isPca6416Pin(pin) {
 		err = fmt.Errorf("pin number is incorrect,must be 3 to 7")
 		return err
 	}
-	slave = pca6416_slave_addr
-	reg = pca6416_gpio_cfg_reg
+	slave = pca6416SlaveAddr
+	reg = pca6416GpioCfgReg
 	data = 0
-	err = i2c_read(slave, reg, &data)
+	err = i2cRead(slave, reg, &data)
 	if err != nil {
 		klog.Errorf("pca6416GpioSetDirection read fail, pin %v err = %v.", pin, err)
 		return err
 	}
 	if dir == 0 {
-		data |= gpio_mask[pin]
+		data |= gpioMask[pin]
 	} else {
-		data &= ^gpio_mask[pin]
+		data &= ^gpioMask[pin]
 	}
-	err = i2c_write(slave, reg, data)
+	err = i2cWrite(slave, reg, data)
 	if err != nil {
 		klog.Errorf("pca6416GpioSetDirection write fail pin %v err = %v.", pin, err)
 	}
@@ -303,27 +311,27 @@ func pca6416GpioSetValue(pin Pin, val uint8) error {
 	var data uint8
 	var reg uint8
 	var slave uint8
-	var gpio_mask = []uint8{0, 0, 0, gpio3_mask, gpio4_mask, gpio5_mask, gpio6_mask, gpio7_mask}
+	var gpioMask = []uint8{0, 0, 0, gpio3Mask, gpio4Mask, gpio5Mask, gpio6Mask, gpio7Mask}
 
 	if false == isPca6416Pin(pin) {
 		err = fmt.Errorf("pin number is incorrect,must be 3 to 7")
 		return err
 	}
-	slave = pca6416_slave_addr
-	reg = pca6416_gpio_out_reg
+	slave = pca6416SlaveAddr
+	reg = pca6416GpioOutReg
 	data = 0
-	err = i2c_read(slave, reg, &data)
+	err = i2cRead(slave, reg, &data)
 	if err != nil {
 		klog.Errorf("pca6416GpioSetValue read fail, pin %v err = %v.", pin, err)
 		return err
 	}
 	if val == 0 {
-		data &= ^gpio_mask[pin]
+		data &= ^gpioMask[pin]
 	} else {
-		data |= gpio_mask[pin]
+		data |= gpioMask[pin]
 	}
 
-	err = i2c_write(slave, reg, data)
+	err = i2cWrite(slave, reg, data)
 	if err != nil {
 		klog.Errorf("pca6416GpioSetValue write fail pin %v err = %v.", pin, err)
 	}
@@ -334,21 +342,21 @@ func pca6416GpioGetValue(pin Pin, val *uint8) error {
 	var data uint8
 	var reg uint8
 	var slave uint8
-	var gpio_mask = []uint8{0, 0, 0, gpio3_mask, gpio4_mask, gpio5_mask, gpio6_mask, gpio7_mask}
+	var gpioMask = []uint8{0, 0, 0, gpio3Mask, gpio4Mask, gpio5Mask, gpio6Mask, gpio7Mask}
 
 	if false == isPca6416Pin(pin) {
 		err = fmt.Errorf("pin number is incorrect,must be 3 to 7")
 		return err
 	}
-	slave = pca6416_slave_addr
-	reg = pca6416_gpio_in_reg
+	slave = pca6416SlaveAddr
+	reg = pca6416GpioInReg
 	data = 0
-	err = i2c_read(slave, reg, &data)
+	err = i2cRead(slave, reg, &data)
 	if err != nil {
 		klog.Errorf("pca6416GpioSetValue read fail, pin %v err = %v.", pin, err)
 		return err
 	}
-	data &= gpio_mask[pin]
+	data &= gpioMask[pin]
 	if data > 0 {
 		*val = '1'
 	} else {
@@ -356,16 +364,16 @@ func pca6416GpioGetValue(pin Pin, val *uint8) error {
 	}
 	return nil
 }
-
+// AscendGpioSetDirection set gpio direction
 func AscendGpioSetDirection(pin Pin, dir uint8) error {
 	var fileName string
 	var direction string
 	var err error
 
 	if pin == 0 {
-		fileName = ascend_gpio_0_dir
+		fileName = ascendGpio0dir
 	} else if pin == 1 {
-		fileName = ascend_gpio_1_dir
+		fileName = ascendGpio1dir
 	} else {
 		err = fmt.Errorf("pin number is incorrect,must be 0 or 1")
 		return err
@@ -383,13 +391,14 @@ func AscendGpioSetDirection(pin Pin, dir uint8) error {
 	return nil
 }
 
+// AscendGpioSetValue set gpio value
 func AscendGpioSetValue(pin Pin, val uint8) error {
 	var fileName string
 	var err error
 	if pin == 0 {
-		fileName = ascend_gpio_0_val
+		fileName = ascendgpio0Val
 	} else if pin == 1 {
-		fileName = ascend_gpio_1_val
+		fileName = ascendgpio1Val
 	} else {
 		err = fmt.Errorf("pin number is incorrect,must be 0 or 1")
 		return err
@@ -402,13 +411,13 @@ func AscendGpioSetValue(pin Pin, val uint8) error {
 	}
 	return err
 }
-
+// AscendGpioGetValue get gpio direction
 func AscendGpioGetValue(pin Pin, val *uint8) error {
 	var fileName string
 	if pin == 0 {
-		fileName = ascend_gpio_0_val
+		fileName = ascendgpio0Val
 	} else if pin == 1 {
-		fileName = ascend_gpio_1_val
+		fileName = ascendgpio1Val
 	} else {
 		err := fmt.Errorf("pin number is incorrect,the correct num is must be 0,1")
 		return err
@@ -477,38 +486,3 @@ func gpioGetValue(pin Pin, val *uint8) error {
 	return result
 }
 
-/*
-func Gpio_test() {
-	var value uint8 = 0
-	var pin Pin
-	var result error
-
-	for pin = 1; pin <= 8; pin++ {
-
-		fmt.Printf("\r\n\r\n gpioSetDirection pin %v Direction = %v ", pin, 1)
-		result = gpioSetDirection(pin, 1)
-
-		value = 0
-		fmt.Printf("\r\n\r\n gpioSetValue pin %v val = %v", pin, value)
-		result = gpioSetValue(pin, value)
-		time.Sleep(10 * (time.Millisecond))
-
-		result = gpioGetValue(pin, &value)
-		fmt.Printf("\r\n \r\n gpioGetValue pin %v val = %v", pin, value)
-		fmt.Printf("\r\n result =  %v ", result)
-		time.Sleep(10 * (time.Millisecond))
-
-		value = 1
-		fmt.Printf("\r\n\r\n gpioSetValue pin %v val = %v", pin, value)
-		result = gpioSetValue(pin, value)
-		time.Sleep(10 * (time.Millisecond))
-
-		result = gpioGetValue(pin, &value)
-		fmt.Printf("\r\n \r\n gpioGetValue pin %v val = %v", pin, value)
-		fmt.Printf("\r\n result =  %v ", result)
-		time.Sleep(10 * (time.Millisecond))
-
-		fmt.Printf("\r\n ")
-	}
-}
-*/

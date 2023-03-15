@@ -10,26 +10,30 @@ import (
 	"unsafe"
 )
 
+// IDMVSProtocolConfig is the protocol config structure.
 type IDMVSProtocolConfig struct {
 	ProtocolName       string `json:"protocolName"`
 	ProtocolConfigData `json:"configData"`
 }
-
+// ProtocolConfigData is the protocol config data structure.
 type ProtocolConfigData struct {
 }
 
+// IDMVSProtocolCommonConfig is the protocol common config structure.
 type IDMVSProtocolCommonConfig struct {
 	CommonCustomizedValues `json:"customizedValues"`
 }
-
+// CommonCustomizedValues is the customized values structure.
 type CommonCustomizedValues struct {
 	Port int `json:"TCPport"`
 }
+// IDMVSVisitorConfig  is the visitor config structure.
 type IDMVSVisitorConfig struct {
 	ProtocolName      string `json:"protocolName"`
 	VisitorConfigData `json:"configData"`
 }
 
+// VisitorConfigData  is the visitor config data  structure.
 type VisitorConfigData struct {
 }
 
@@ -42,6 +46,7 @@ type IDMVS struct {
 	listeners            map[int]*IDMVSInstance
 }
 
+// IDMVSInstance is the instance structure
 type IDMVSInstance struct {
 	server      net.Listener
 	codeValue   string
