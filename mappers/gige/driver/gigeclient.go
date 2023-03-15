@@ -138,7 +138,7 @@ import (
 
 const (
 	imageTriggerSingle = "single"
-	imageTriggerContinue = "continuous"
+	imageTriggerContinus = "continuous"
 	imageTriggerStop = "stop"
 )
 
@@ -153,7 +153,7 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 		switch convertValue {
 		case imageTriggerSingle:
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "single"  // move to the funcion postImage
-		case imageTriggerContinue:
+		case imageTriggerContinus:
 			//gigEClient.deviceMeta[DeviceSN].ImageTrigger = "continuous" // move to the funcion postImage
 		case imageTriggerStop:
 			gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTriggerStop
