@@ -137,9 +137,9 @@ import (
 )
 
 const (
-	imageTriggerSingle = "single"
+	imageTriggerSingle   = "single"
 	imageTriggerContinus = "continuous"
-	imageTriggerStop = "stop"
+	imageTriggerStop     = "stop"
 )
 
 // Set is used to set device properitys
@@ -168,7 +168,6 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 		if convertValue != imageTriggerStop {
 			if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
 				gigEClient.PostImage(DeviceSN, convertValue)
-
 			} else {
 				klog.V(4).Infof("Device %v's imageURL is null, so do not post the image", DeviceSN)
 			}
@@ -212,6 +211,7 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 	}
 	return nil
 }
+
 // Get is used to get device properitys*/
 func (gigEClient *GigEVisionDevice) Get(DeviceSN string) (results string, err error) {
 	switch gigEClient.deviceMeta[DeviceSN].FeatureName {
@@ -327,7 +327,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 		var buffer []byte
 		var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
 		defer C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
-		defer func(){
+		defer func() {
 			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
 		}()
 		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
@@ -358,7 +358,7 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 
 		data, _ := ioutil.ReadAll(resp.Body)
 		if resp.StatusCode == 200 {
-		    gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
 		}
 		fmt.Println("response Status:", resp.Status)
 		fmt.Println("response Headers:", resp.Header)
