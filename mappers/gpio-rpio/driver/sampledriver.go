@@ -135,8 +135,5 @@ func (d *GPIO) StopDevice() (err error) {
 func (d *GPIO) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
 	err := rpio.Open()
 	defer rpio.Close()
-	if err != nil {
-		return false
-	}
-	return true
+	return  err == nil
 }

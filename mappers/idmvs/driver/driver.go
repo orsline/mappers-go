@@ -84,7 +84,6 @@ func (d *IDMVS) SetConfig(protocolCommon, visitor, protocol []byte) (port int, e
 			fmt.Printf("Unmarshal visitorConfig error: %v\n", err)
 			return 0, err
 		}
-
 	}
 	if protocol != nil {
 		if err = json.Unmarshal(protocol, &d.protocolConfig); err != nil {
@@ -127,12 +126,10 @@ func (d *IDMVS) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (statu
 	if err != nil {
 		return false
 	}
-
 	return d.listeners[port].status
 }
 
 func (d *IDMVS) connect() {
-
 	if d.listeners == nil {
 		d.listeners = make(map[int]*IDMVSInstance)
 	}

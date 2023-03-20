@@ -38,9 +38,8 @@ type VisitorConfigData struct {
 }
 
 type GatewayData struct {
-	JsonData map[string]interface{}
+	JSONData map[string]interface{}
 }
-
 
 // MQTT Realize the structure of random number
 type MQTT struct {
@@ -78,7 +77,6 @@ func (d *MQTT) SetConfig(protocolCommon, visitor, protocol []byte) (server strin
 			fmt.Printf("Unmarshal visitorConfig error: %v\n", err)
 			return "", err
 		}
-
 	}
 	if protocol != nil {
 		if err = json.Unmarshal(protocol, &d.protocolConfig); err != nil {
@@ -88,7 +86,6 @@ func (d *MQTT) SetConfig(protocolCommon, visitor, protocol []byte) (server strin
 	}
 	server = d.protocolCommonConfig.IP + ":" +strconv.Itoa(d.protocolCommonConfig.Port)
 	return  server,nil
-
 }
 
 // ReadDeviceData  is an interface that reads data from a specific device, data is a type of string
@@ -98,7 +95,7 @@ func (d *MQTT) ReadDeviceData(protocolCommon, visitor, protocol []byte) (data in
 	if err != nil {
 		return nil, err
 	}
-	return SensorData.JsonData[d.visitorConfig.Feature],nil
+	return SensorData.JSONData[d.visitorConfig.Feature],nil
 }
 
 // WriteDeviceData is an interface that write data to a specific device, data's DataType is Consistent with configmap
@@ -114,16 +111,11 @@ func (d *MQTT) StopDevice() (err error) {
 	return nil
 }
 
-
 // GetDeviceStatus is an interface to get the device status true is OK , false is DISCONNECTED
 func (d *MQTT) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
 	err := d.Client.Publish("pulse", "")
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
-
 
 func (d *MQTT )newClient(){
 	server := d.protocolCommonConfig.IP + ":" +strconv.Itoa(d.protocolCommonConfig.Port)
@@ -150,7 +142,7 @@ func (d *MQTT )newClient(){
 
 // onMessage callback function of Mqtt subscribe message.
 func onMessage(client mqtt.Client, message mqtt.Message) {
-	err := json.Unmarshal(message.Payload(), &SensorData.JsonData)
+	err := json.Unmarshal(message.Payload(), &SensorData.JSONData)
 	if err != nil {
 		fmt.Println("json.Unmarshal error:", err.Error())
 		return

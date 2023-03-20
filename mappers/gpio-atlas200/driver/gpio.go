@@ -162,7 +162,10 @@ func (pin Pin) Read() uint8 {
 
 // WritePin is to write value to pin
 func WritePin(pin Pin, val uint8) {
-	gpioSetValue(pin, val)
+	err := gpioSetValue(pin, val)
+	if err != nil {
+		klog.Errorf("gpioSetValue fail, pin %v err = %v.", pin, err)
+	}
 }
 
 // ReadPin is to read value of pin
@@ -187,7 +190,10 @@ func setPinMode(pin Pin, mode Mode) {
 	case Output:
 		f = out
 	}
-	gpioSetDirection(pin, f)
+	err := gpioSetDirection(pin, f)
+	if err != nil {
+		klog.Errorf("gpioSetValue fail, pin %v err = %v.", pin, err)
+	}
 }
 
 // Open  open a pin
@@ -441,7 +447,7 @@ func isAscendPin(pin Pin) bool {
 // set gpio direction ,0-- in ,1--out
 func gpioSetDirection(pin Pin, direction uint8) error {
 	var result error
-	if true == isAscendPin(pin) {
+	if isAscendPin(pin) {
 		result = AscendGpioSetDirection(pin, direction)
 	} else {
 		result = pca6416GpioSetDirection(pin, direction)
@@ -458,7 +464,7 @@ func gpioSetDirection(pin Pin, direction uint8) error {
 func gpioSetValue(pin Pin, val uint8) error {
 	var result error
 
-	if true == isAscendPin(pin) {
+	if isAscendPin(pin) {
 		result = AscendGpioSetValue(pin, val)
 	} else {
 		result = pca6416GpioSetValue(pin, val)
@@ -473,7 +479,7 @@ func gpioSetValue(pin Pin, val uint8) error {
 func gpioGetValue(pin Pin, val *uint8) error {
 	var result error
 
-	if true == isAscendPin(pin) {
+	if isAscendPin(pin) {
 		result = AscendGpioGetValue(pin, val)
 	} else {
 		result = pca6416GpioGetValue(pin, val)

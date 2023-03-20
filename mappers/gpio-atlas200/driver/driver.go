@@ -127,9 +127,5 @@ func (d *GPIO) StopDevice() (err error) {
 
 // GetDeviceStatus is an interface to get the device status true is OK , false is DISCONNECTED
 func (d *GPIO) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status bool) {
-	err := Open()
-	if err != nil {
-		return false
-	}
 	return true
 }
