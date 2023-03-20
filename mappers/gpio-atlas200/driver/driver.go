@@ -108,7 +108,6 @@ func (d *GPIO) WriteDeviceData(data interface{}, protocolCommon, visitor, protoc
 	if strings.ToUpper(status) == "OFF" {
 		pinClient.SetOutPut()
 		pinClient.SetLow()
-
 	} else if strings.ToUpper(status) == "ON" {
 		pinClient.SetOutPut()
 		pinClient.SetHight()
@@ -132,6 +131,5 @@ func (d *GPIO) GetDeviceStatus(protocolCommon, visitor, protocol []byte) (status
 	if err != nil {
 		return false
 	}
-	defer Close()
 	return true
 }

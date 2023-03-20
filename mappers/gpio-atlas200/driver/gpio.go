@@ -49,15 +49,15 @@ type Pin uint8
 // State type int8
 type State uint8
 type i2cMsg struct {
-	addr      uint16
-	flags     uint16
-	len       uint16
+	addr    uint16
+	flags   uint16
+	len     uint16
 	padding uint16
-	buf       uintptr
+	buf     uintptr
 }
 
 type i2cCtrl struct {
-	msgs    uintptr
+	msgs   uintptr
 	msgNum uint32
 }
 
@@ -69,10 +69,10 @@ const (
 )
 const (
 	i2cDeviceName = "/dev/i2c-1"
-	i2cRetres      = 0x0701
-	i2cTimeOut     = 0x0702
-	i2cSlave       = 0x0703
-	i2cRDWR        = 0x0707
+	i2cRetres     = 0x0701
+	i2cTimeOut    = 0x0702
+	i2cSlave      = 0x0703
+	i2cRDWR       = 0x0707
 	i2cmRD        = 0x01
 
 	pca6416SlaveAddr       = 0x20
@@ -91,9 +91,9 @@ const (
 
 // Generic ioctl constants
 const (
-	iocNone  = 0x0
-	iocWrite = 0x1
-	iocRead  = 0x2
+	iocNone     = 0x0
+	iocWrite    = 0x1
+	iocRead     = 0x2
 	iocNRBits   = 8
 	iocTypeBits = 8
 
@@ -103,21 +103,12 @@ const (
 	iocNRShift   = 0
 	iocTypeShift = iocNRShift + iocNRBits     //8 + 0
 	iocSizeShift = iocTypeShift + iocTypeBits //8 + 8
-	iocDirShift = iocSizeShift + iocSizeBits //16 + 14
+	iocDirShift  = iocSizeShift + iocSizeBits //16 + 14
 
 	iocNRMask   = ((1 << iocNRBits) - 1)
 	iocTYPEMask = ((1 << iocTypeBits) - 1)
 	iocSizeMask = ((1 << iocSizeBits) - 1)
 	iocDirMask  = ((1 << iocDirBits) - 1)
-)
-
-// Some useful additional ioctl constanst
-const (
-	iocIn        = iocWrite << iocDirShift
-	iocOut       = iocRead << iocDirShift
-	iocInOut     = (iocWrite | iocRead) << iocDirShift
-	iocSizeMask2  = iocSizeMask << iocSizeShift
-	IocSizeShift2 = iocSizeShift
 )
 
 const (
@@ -145,12 +136,18 @@ func (pin Pin) SetOutPut() {
 
 // SetHight Set pin Hight
 func (pin Pin) SetHight() {
-	gpioSetValue(pin, High)
+	err := gpioSetValue(pin, High)
+	if err != nil {
+		klog.Errorf("gpioSetValue fail, pin %v err = %v.", pin, err)
+	}
 }
 
 // SetLow  Set pin as Low
 func (pin Pin) SetLow() {
-	gpioSetValue(pin, Low)
+	err := gpioSetValue(pin, Low)
+	if err != nil {
+		klog.Errorf("gpioSetValue fail, pin %v err = %v.", pin, err)
+	}
 }
 
 // Write: Set pin state (high/low)
@@ -162,10 +159,12 @@ func (pin Pin) Write(val uint8) {
 func (pin Pin) Read() uint8 {
 	return ReadPin(pin)
 }
+
 // WritePin is to write value to pin
 func WritePin(pin Pin, val uint8) {
 	gpioSetValue(pin, val)
 }
+
 // ReadPin is to read value of pin
 func ReadPin(pin Pin) uint8 {
 	var val uint8
@@ -190,6 +189,7 @@ func setPinMode(pin Pin, mode Mode) {
 	}
 	gpioSetDirection(pin, f)
 }
+
 // Open  open a pin
 func Open() (err error) {
 	return nil
@@ -260,7 +260,7 @@ func i2cWrite(slave uint8, reg uint8, data uint8) error {
 	}
 
 	ssmMsg := i2cCtrl{
-		msgs:    uintptr(unsafe.Pointer(&msg[0])),
+		msgs:   uintptr(unsafe.Pointer(&msg[0])),
 		msgNum: uint32(1),
 	}
 
@@ -282,7 +282,7 @@ func pca6416GpioSetDirection(pin Pin, dir uint8) error {
 	var slave uint8
 	var gpioMask = []uint8{0, 0, 0, gpio3Mask, gpio4Mask, gpio5Mask, gpio6Mask, gpio7Mask}
 
-	if false == isPca6416Pin(pin) {
+	if !isPca6416Pin(pin) {
 		err = fmt.Errorf("pin number is incorrect,must be 3 to 7")
 		return err
 	}
@@ -312,7 +312,7 @@ func pca6416GpioSetValue(pin Pin, val uint8) error {
 	var slave uint8
 	var gpioMask = []uint8{0, 0, 0, gpio3Mask, gpio4Mask, gpio5Mask, gpio6Mask, gpio7Mask}
 
-	if false == isPca6416Pin(pin) {
+	if !isPca6416Pin(pin) {
 		err = fmt.Errorf("pin number is incorrect,must be 3 to 7")
 		return err
 	}
@@ -343,7 +343,7 @@ func pca6416GpioGetValue(pin Pin, val *uint8) error {
 	var slave uint8
 	var gpioMask = []uint8{0, 0, 0, gpio3Mask, gpio4Mask, gpio5Mask, gpio6Mask, gpio7Mask}
 
-	if false == isPca6416Pin(pin) {
+	if !isPca6416Pin(pin) {
 		err = fmt.Errorf("pin number is incorrect,must be 3 to 7")
 		return err
 	}
@@ -363,6 +363,7 @@ func pca6416GpioGetValue(pin Pin, val *uint8) error {
 	}
 	return nil
 }
+
 // AscendGpioSetDirection set gpio direction
 func AscendGpioSetDirection(pin Pin, dir uint8) error {
 	var fileName string
@@ -410,6 +411,7 @@ func AscendGpioSetValue(pin Pin, val uint8) error {
 	}
 	return err
 }
+
 // AscendGpioGetValue get gpio direction
 func AscendGpioGetValue(pin Pin, val *uint8) error {
 	var fileName string
@@ -484,4 +486,3 @@ func gpioGetValue(pin Pin, val *uint8) error {
 	}
 	return result
 }
-
