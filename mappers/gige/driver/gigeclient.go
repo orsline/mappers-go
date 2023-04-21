@@ -133,6 +133,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 )
 
@@ -140,6 +141,9 @@ const (
 	imageTriggerSingle   = "single"
 	imageTriggerContinus = "continuous"
 	imageTriggerStop     = "stop"
+
+	retryPostImageWait = 10 * time.Second
+	postImageInterval  = 10 * time.Second
 )
 
 // Set is used to set device properitys
@@ -167,7 +171,15 @@ func (gigEClient *GigEVisionDevice) Set(DeviceSN string, value interface{}) (err
 
 		if convertValue != imageTriggerStop {
 			if gigEClient.deviceMeta[DeviceSN].imageURL != "" {
-				gigEClient.PostImage(DeviceSN, convertValue)
+				if convertValue == imageTriggerContinus {
+					if gigEClient.deviceMeta[DeviceSN].ImageTrigger != imageTriggerContinus {
+						gigEClient.PostImageContinuous(DeviceSN)
+					} else {
+						klog.V(4).Infof("Device %v's ImageTrigger already set to continuous", DeviceSN)
+					}
+				} else {
+					gigEClient.PostImage(DeviceSN, convertValue)
+				}
 			} else {
 				klog.V(4).Infof("Device %v's imageURL is null, so do not post the image", DeviceSN)
 			}
@@ -281,6 +293,7 @@ func (gigEClient *GigEVisionDevice) NewClient(DeviceSN string) (err error) {
 				imageURL:         "",
 				ImageTrigger:     "stop",
 				ImagePostingFlag: false,
+				ImageGettingFlag: false,
 				FeatureName:      "",
 				maxRetryTimes:    100,
 			}
@@ -299,19 +312,57 @@ func (gigEClient *GigEVisionDevice) NewClient(DeviceSN string) (err error) {
 	return nil
 }
 
+// PostImageContinuous is used to continuously post images to dest url
+func (gigEClient *GigEVisionDevice) PostImageContinuous(DeviceSN string) {
+	gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTriggerContinus
+	go func() {
+		for {
+			if gigEClient.deviceMeta[DeviceSN].ImageTrigger != imageTriggerContinus {
+				return
+			}
+			getImageSuccess, imageBuffer, size := getImageProcess(gigEClient, DeviceSN)
+			if !getImageSuccess {
+				time.Sleep(retryPostImageWait)
+				continue
+			}
+			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = true
+			postImageProcess(gigEClient, DeviceSN, imageBuffer, size)
+
+			time.Sleep(postImageInterval)
+		}
+	}()
+}
+
 // PostImage is used to post images to dest url
 func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue string) {
-	var imageBuffer *byte
-	var size int
+	gigEClient.deviceMeta[DeviceSN].ImageTrigger = imageTriggerStop // set ImageTrigger to stop first to exit continuously post image loop
+	getImageSuccess, imageBuffer, size := getImageProcess(gigEClient, DeviceSN)
+	if !getImageSuccess {
+		return
+	}
+	gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = true
+	go func() {
+		respStatusCode := postImageProcess(gigEClient, DeviceSN, imageBuffer, size)
+		if respStatusCode == 200 {
+			gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
+		}
+	}()
+}
+
+func getImageProcess(gigEClient *GigEVisionDevice, DeviceSN string) (getImgSuccess bool, imageBuffer *byte, size int) {
 	var p = &imageBuffer
 	var msg *C.char
 	defer C.free(unsafe.Pointer(msg))
 
-	if gigEClient.deviceMeta[DeviceSN].ImagePostingFlag {
-		klog.Errorf("image post is processing,do nothing,deviceSN %v", DeviceSN)
-		return
+	if gigEClient.deviceMeta[DeviceSN].ImagePostingFlag || gigEClient.deviceMeta[DeviceSN].ImageGettingFlag {
+		klog.Errorf("image post is processing, do nothing, deviceSN %v", DeviceSN)
+		return false, nil, 0
 	}
 
+	gigEClient.deviceMeta[DeviceSN].ImageGettingFlag = true
+	defer func() {
+		gigEClient.deviceMeta[DeviceSN].ImageGettingFlag = false
+	}()
 	signal := C.get_image(gigEClient.deviceMeta[DeviceSN].dev, C.CString(gigEClient.deviceMeta[DeviceSN].imageFormat), (**C.char)(unsafe.Pointer(p)), (*C.int)(unsafe.Pointer(&size)), &msg)
 	if signal != 0 {
 		klog.Errorf("Failed to get %s's images: %s.", DeviceSN, (string)(C.GoString(msg)))
@@ -319,51 +370,51 @@ func (gigEClient *GigEVisionDevice) PostImage(DeviceSN string, convertValue stri
 			gigEClient.deviceMeta[DeviceSN].deviceStatus = false
 			go gigEClient.ReconnectDevice(DeviceSN)
 		}
-		return
+		return false, nil, 0
 	}
-	gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = true
+	return true, imageBuffer, size
+}
 
-	go func() {
-		var buffer []byte
-		var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
-		defer C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
-		defer func() {
-			gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
-		}()
-		bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
-		bufferHdr.Len = size
-		bufferHdr.Cap = size
-		postStr := base64.StdEncoding.EncodeToString(buffer)
-		bufferSize := len(buffer)
-		body := strings.NewReader(`{"size":` + strconv.Itoa(bufferSize) + `,"value":"` + postStr + `"}`)
-		req, _ := http.NewRequest(http.MethodPost, gigEClient.deviceMeta[DeviceSN].imageURL, body)
-		if req == nil {
-			klog.Errorf("Failed to post %s's images: URL can't POST.", DeviceSN)
-			return
-		}
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
-		client := &http.Client{}
-		resp, _ := client.Do(req)
-		if resp == nil {
-			klog.Errorf("Failed to post %s's images: URL no reaction.", DeviceSN)
-			return
-		}
-
-		defer func(Body io.ReadCloser) {
-			err := Body.Close()
-			if err != nil {
-
-			}
-		}(resp.Body)
-
-		data, _ := ioutil.ReadAll(resp.Body)
-		if resp.StatusCode == 200 {
-			gigEClient.deviceMeta[DeviceSN].ImageTrigger = convertValue
-		}
-		fmt.Println("response Status:", resp.Status)
-		fmt.Println("response Headers:", resp.Header)
-		fmt.Println("response Body:", string(data))
+// postImageProcess returns response status code if post image request is done, returns 0 if failed
+func postImageProcess(gigEClient *GigEVisionDevice, DeviceSN string, imageBuffer *byte, size int) int {
+	var buffer []byte
+	var bufferHdr = (*reflect.SliceHeader)(unsafe.Pointer(&buffer))
+	defer C.free_image((**C.char)(unsafe.Pointer(&imageBuffer)))
+	defer func() {
+		gigEClient.deviceMeta[DeviceSN].ImagePostingFlag = false
 	}()
+	bufferHdr.Data = uintptr(unsafe.Pointer(imageBuffer))
+	bufferHdr.Len = size
+	bufferHdr.Cap = size
+	postStr := base64.StdEncoding.EncodeToString(buffer)
+	bufferSize := len(buffer)
+	body := strings.NewReader(`{"size":` + strconv.Itoa(bufferSize) + `,"value":"` + postStr + `"}`)
+	req, _ := http.NewRequest(http.MethodPost, gigEClient.deviceMeta[DeviceSN].imageURL, body)
+	if req == nil {
+		klog.Errorf("Failed to post %s's images: URL can't POST.", DeviceSN)
+		return 0
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	if resp == nil {
+		klog.Errorf("Failed to post %s's images: URL no reaction.", DeviceSN)
+		return 0
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+
+	data, _ := ioutil.ReadAll(resp.Body)
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	fmt.Println("response Body:", string(data))
+	return resp.StatusCode
 }
 
 func (gigEClient *GigEVisionDevice) convert(value interface{}) (convertValue string, err error) {

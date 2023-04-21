@@ -51,6 +51,7 @@ type DeviceMeta struct {
 	imageURL         string
 	ImageTrigger     string
 	ImagePostingFlag bool
+	ImageGettingFlag bool
 	maxRetryTimes    int
 }
 
