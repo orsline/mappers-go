@@ -26,7 +26,7 @@ var (
 
 // MapperService the structure of the variable required by the mapper
 type MapperService struct {
-	ProtocolName     string
+	ProtocolName    string
 	configMap       string
 	deviceInstances map[string]*configmap.DeviceInstance
 	deviceModels    map[string]*configmap.DeviceModel
@@ -130,10 +130,12 @@ func (ms *MapperService) InitMapperService(protocolName string, c config.Config,
 		},
 	})
 	controller.InitDeviceConfig(ms.driver, ms.dic)
-	ms.httpClient = httpclient.NewHTTPClient(ms.dic)
-	err = ms.httpClient.Init(c)
-	if err != nil {
-		klog.Errorf("Failed to start Http server:%v", err)
+	if !c.HTTP.Disable {
+		ms.httpClient = httpclient.NewHTTPClient(ms.dic)
+		err = ms.httpClient.Init(c)
+		if err != nil {
+			klog.Errorf("Failed to start Http server:%v", err)
+		}
 	}
 }
 

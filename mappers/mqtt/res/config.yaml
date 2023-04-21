@@ -8,6 +8,7 @@ mqtt:
   privatekey:
   caCert:
 http:
+  disable: false
   certification: ""
   privatekey: ""
   caCert: ""

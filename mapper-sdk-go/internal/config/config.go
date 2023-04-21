@@ -14,7 +14,7 @@ import (
 // Config is the modbus mapper configuration.
 type Config struct {
 	Mqtt      Mqtt   `yaml:"mqtt,omitempty"`
-	HTTP     HTTP   `yaml:"http,omitempty"`
+	HTTP      HTTP   `yaml:"http,omitempty"`
 	Configmap string `yaml:"configmap"`
 }
 
@@ -24,7 +24,7 @@ type Mqtt struct {
 	ServerName    string `yaml:"servername"`
 	Username      string `yaml:"username,omitempty"`
 	Password      string `yaml:"password,omitempty"`
-	ClientID	  string  `yaml:"clientId"`
+	ClientID      string `yaml:"clientId"`
 	Cert          string `yaml:"certification,omitempty"`
 	PrivateKey    string `yaml:"privatekey,omitempty"`
 	CaCert        string `yaml:"caCert,omitempty"`
@@ -32,6 +32,7 @@ type Mqtt struct {
 
 // HTTP is the HTTP configuration
 type HTTP struct {
+	Disable    bool   `yaml:"disable"` // disable HTTP server
 	CaCert     string `yaml:"caCert,omitempty"`
 	Cert       string `yaml:"certification,omitempty"`
 	PrivateKey string `yaml:"privatekey,omitempty"`
